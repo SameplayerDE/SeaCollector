@@ -19,6 +19,8 @@ namespace SeaCollector
         // Calculated position and specified target
         public Vector3 Position { get; private set; }
         public Vector3 Target { get; set; }
+        
+        public BoundingFrustum Frustum { get; set; }
         public ArcBallCamera(Vector3 Target, float RotationX,
             float RotationY, float MinRotationY, float MaxRotationY,
             float Distance, float MinDistance, float MaxDistance,
@@ -37,6 +39,27 @@ namespace SeaCollector
             this.Distance = MathHelper.Clamp(Distance, MinDistance, 
                 MaxDistance);
         }
+        
+        public void GenerateFrustum()
+        {
+            Matrix viewProjection = View * Projection;
+            Frustum = new BoundingFrustum(viewProjection);
+        }
+        
+        public bool BoundingVolumeIsInView(BoundingSphere sphere)
+        {
+            return (Frustum.Contains(sphere) != ContainmentType.Disjoint);
+        }
+        public bool BoundingVolumeIsInView(Vector3 sphere)
+        {
+            return (Frustum.Contains(sphere) != ContainmentType.Disjoint);
+        }
+        
+        public bool BoundingVolumeIsInView(BoundingBox box)
+        {
+            return (Frustum.Contains(box) != ContainmentType.Disjoint);
+        }
+        
         public void Move(float DistanceChange)
         {
             this.Distance += DistanceChange;

@@ -10,7 +10,6 @@ using Microsoft.Xna.Framework.Input;
 using SeaCollector.Entities;
 using SeaCollector.HxPly;
 using SeaCollector.Rendering;
-using SharpDX;
 using Color = Microsoft.Xna.Framework.Color;
 using Matrix = Microsoft.Xna.Framework.Matrix;
 using Rectangle = Microsoft.Xna.Framework.Rectangle;
@@ -354,7 +353,7 @@ namespace SeaCollector
                     //_player.Scale.X = Math.Clamp(_player.Scale.X, 1, 3); 
                     //_player.Scale.Y = Math.Clamp(_player.Scale.Y, 1, 3); 
                     //_player.Scale.Z = Math.Clamp(_player.Scale.Z, 1, 3); 
-                    _soundEffect.Play(0.5f, _random.NextFloat(0, 1), 0);
+                    //_soundEffect.Play(0.5f, _random.NextFloat(0, 1), 0);
                 }
             }
 
@@ -381,6 +380,8 @@ namespace SeaCollector
                 0.1f,
                 100f
             );
+
+            _camera.Frustum = new BoundingFrustum(_view * _projection);
 
             _playerShader.Parameters["World"]?.SetValue(_world);
             _playerShader.Parameters["View"]?.SetValue(_view);
@@ -432,7 +433,10 @@ namespace SeaCollector
                 var distance = Vector3.Distance(_player.Position, item.Position);
                 if (distance < 10f)
                 {
-                   item.Draw(GraphicsDevice, _itemShader, _world, _view, _projection);
+                    if (_camera.BoundingVolumeIsInView(item.Position))
+                    {
+                        item.Draw(GraphicsDevice, _itemShader, _world, _view, _projection);
+                    }
                 }
             }
 

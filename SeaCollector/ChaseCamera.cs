@@ -15,6 +15,8 @@ namespace SeaCollector
         public Vector3 RelativeCameraRotation { get; set; }
         float springiness = .05f;
 
+        public BoundingFrustum Frustum;
+        
         public float Springiness
         {
             get { return springiness; }
@@ -74,5 +76,26 @@ namespace SeaCollector
             // Recalculate the view matrix
             View = Matrix.CreateLookAt(Position, Target, up);
         }
+        
+        public void GenerateFrustum()
+        {
+            Matrix viewProjection = View * Projection;
+            Frustum = new BoundingFrustum(viewProjection);
+        }
+        
+        public bool BoundingVolumeIsInView(BoundingSphere sphere)
+        {
+            return (Frustum.Contains(sphere) != ContainmentType.Disjoint);
+        }
+        public bool BoundingVolumeIsInView(Vector3 sphere)
+        {
+            return (Frustum.Contains(sphere) != ContainmentType.Disjoint);
+        }
+        
+        public bool BoundingVolumeIsInView(BoundingBox box)
+        {
+            return (Frustum.Contains(box) != ContainmentType.Disjoint);
+        }
+        
     }
 }
