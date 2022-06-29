@@ -142,6 +142,7 @@ namespace SeaCollector.HxObj
                 }
             }
 
+            result.Name = name;
             result.Vertices = vertices;
             result.UVs = uvs;
             result.Normals = normals;
