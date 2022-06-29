@@ -5,10 +5,10 @@ using System.Collections.Generic;
 using System.IO;
 using System.Text;
 
-namespace Monogame_VS2019_Shared_Game0003
+namespace SeaCollector.HxObj
 {
 
-    public class FileReader_OBJ
+    /*public class FileReader_OBJ
     {
 
         private List<Vector3> _normals = new List<Vector3>();
@@ -135,5 +135,5 @@ namespace Monogame_VS2019_Shared_Game0003
 
             return new Mesh(vertexPositions, faceCount, vertexCount);
         }
-    }
+    }*/
 }

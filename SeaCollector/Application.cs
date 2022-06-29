@@ -134,13 +134,13 @@ namespace SeaCollector
 
             _seaShader.Parameters["Texture"]?.SetValue(Content.Load<Texture>("waves"));
 
-            for (var y = 0; y < 1000; y++)
+            for (var y = 0; y < 100; y++)
             {
-                for (var x = 0; x < 1000; x++)
+                for (var x = 0; x < 100; x++)
                 {
                     
-                    var noiseValue = _islandNoiseResultValues[x + 1000 * y];
-                    if (noiseValue > 0.4f)
+                    var noiseValue = _islandNoiseResultValues[x + 100 * y];
+                    if (noiseValue > 0.9f)
                     {
                         _items.Add(new Item()
                             {
@@ -197,27 +197,27 @@ namespace SeaCollector
             _islandNoiseMain.SetFractalType(FastNoiseLite.FractalType.None);
             
             _islandNoiseFeatures0.SetNoiseType(FastNoiseLite.NoiseType.Perlin);
-            _islandNoiseFeatures0.SetFrequency(0.004f);
+            _islandNoiseFeatures0.SetFrequency(0.04f);
             _islandNoiseFeatures0.SetFractalType(FastNoiseLite.FractalType.None);
             
             _islandNoiseFeatures0.SetSeed(DateTime.Now.Millisecond);
             
             _islandNoiseFeatures1.SetNoiseType(FastNoiseLite.NoiseType.Cellular);
-            _islandNoiseFeatures1.SetFrequency(0.008f);
+            _islandNoiseFeatures1.SetFrequency(0.08f);
             _islandNoiseFeatures1.SetFractalType(FastNoiseLite.FractalType.None);
             
             _islandNoiseFeatures0.SetSeed(DateTime.Now.Millisecond);
 
-            var texture = new Texture2D(GraphicsDevice, 1000, 1000);
-            var data = new Color[1000 * 1000];
-            _islandNoiseResultValues = new float[1000 * 1000];
+            var texture = new Texture2D(GraphicsDevice, 100, 100);
+            var data = new Color[100 * 100];
+            _islandNoiseResultValues = new float[100 * 100];
 
             var min = 0f;
             var max = 0f;
             
-            for (var y = 0; y < 1000; y++)
+            for (var y = 0; y < 100; y++)
             {
-                for (var x = 0; x < 1000; x++)
+                for (var x = 0; x < 100; x++)
                 {
                     var noiseMainValue = 1 - _islandNoiseMain.GetNoise(x, y);
                     var noiseFeatureValue0 = _islandNoiseFeatures0.GetNoise(x, y);
@@ -231,9 +231,9 @@ namespace SeaCollector
                     }
                     
                     var color = new Color(noiseResult, noiseResult, noiseResult);
-                    _islandNoiseResultValues[x + 1000 * y] = noiseResult;
+                    _islandNoiseResultValues[x + 100 * y] = noiseResult;
 
-                    data[x + 1000 * y] = color;
+                    data[x + 100 * y] = color;
                     
                     if (noiseResult < min)
                     {
@@ -432,7 +432,7 @@ namespace SeaCollector
                 var distance = Vector3.Distance(_player.Position, item.Position);
                 if (distance < 10f)
                 {
-                    item.Draw(GraphicsDevice, _itemShader, _world, _view, _projection);
+                   item.Draw(GraphicsDevice, _itemShader, _world, _view, _projection);
                 }
             }
 
@@ -440,10 +440,10 @@ namespace SeaCollector
             {
                 _spriteBatch.Begin(SpriteSortMode.Immediate, samplerState: SamplerState.PointClamp);
                 _mapShader.Techniques["SpriteDrawing"].Passes[0].Apply();
-                _spriteBatch.Draw(_seaMap, new Rectangle(25, 25, 500, 500), Color.White);
+                _spriteBatch.Draw(_seaMap, new Rectangle(25, 25, 200, 200), Color.White);
                 _spriteBatch.End();
                 _spriteBatch.Begin(SpriteSortMode.Immediate, samplerState: SamplerState.PointClamp);
-                _spriteBatch.Draw(_playerMap, new Vector2(25 + _player.Position.X, 25 + _player.Position.Z),
+                _spriteBatch.Draw(_playerMap, new Vector2(25 + _player.Position.X * 4, 25 + _player.Position.Z * 4),
                     null, Color.White, -_player.Rotation.Y, new Vector2(16, 16), 0.5f, SpriteEffects.None, 1f);
                 _spriteBatch.End();
             }
