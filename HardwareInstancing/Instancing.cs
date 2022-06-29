@@ -30,7 +30,7 @@ namespace HardwareInstancing
             public Vector2 AtlasCoordinate;
         };
 
-        Int32 instanceCount = 1000000;
+        Int32 instanceCount = 10000;
 
         public void Initialize(GraphicsDevice device)
         {
