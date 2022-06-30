@@ -18,7 +18,7 @@ float Total;
 
 float FogStart = 5;
 float FogEnd = 10;
-float3 FogColor = float3(1, 1, 1);
+float3 FogColor = float3(78, 202, 255) / 255;
 
     
    

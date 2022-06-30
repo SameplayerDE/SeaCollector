@@ -116,7 +116,6 @@ namespace SeaCollector.HxObj
                     {
                         //vertex and uv
                         face.SetType(FaceType.VertexTexture);
-                        face.SetType(FaceType.VertexNormal);
                         foreach (var value in values) //DataGroups
                         {
                             // ReSharper disable once HeapView.DelegateAllocation
@@ -136,7 +135,10 @@ namespace SeaCollector.HxObj
 #if DEBUG
                         Console.WriteLine(string.Join(",", indices));
 #endif
-                        face.AddData(indices);
+                        foreach (var index in indices)
+                        {
+                            face.AddData(new [] {index});
+                        }
                     }
                     faces.Add(face);
                 }

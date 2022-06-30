@@ -24,8 +24,8 @@ float3 LightColor = float3(0.9, 0.9, 0.9);
 float SpecularPower = 256;
 float3 SpecularColor = float3(1, 1, 1);
 
-float FogStart = 5;
-float FogEnd = 10;
+float FogStart = 25;
+float FogEnd = 100;
 float3 FogColor = float3(1, 1, 1);
 
 struct VertexShaderInput

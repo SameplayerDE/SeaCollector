@@ -33,6 +33,10 @@ namespace SeaCollector.Entities
 
             l_world *= n_scale * n_rotation * n_translation;
 
+            
+            graphicsDevice.SetVertexBuffer(Mesh.VertexBuffer);
+            graphicsDevice.Indices = Mesh.IndexBuffer;
+            
             foreach (var currentTechniquePass in effect.CurrentTechnique.Passes)
             {
                 effect.Parameters["WorldViewProjection"]?.SetValue(l_world * l_view * l_proj);
@@ -40,7 +44,8 @@ namespace SeaCollector.Entities
                 effect.Parameters["View"]?.SetValue(l_view);
                 effect.Parameters["Projection"]?.SetValue(l_proj);
                 currentTechniquePass.Apply();
-                graphicsDevice.DrawUserPrimitives(PrimitiveType.TriangleList, Mesh.Data, 0, Mesh.Data.Length / 3);
+                //graphicsDevice.DrawUserPrimitives(PrimitiveType.TriangleList, Mesh.Data, 0, Mesh.Data.Length / 3);
+                graphicsDevice.DrawIndexedPrimitives(PrimitiveType.TriangleList, 0, 0, Mesh.Data.Length / 3);
             }
         }
     }

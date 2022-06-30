@@ -5,7 +5,7 @@ namespace SeaCollector.HxObj
     public class Face
     {
         public FaceType Type;
-        public int DataGroupCount;
+        public int DataGroupCount => Data.Count;
         public readonly List<int[]> Data;
 
         public Face()
@@ -24,7 +24,6 @@ namespace SeaCollector.HxObj
         public void AddData(int[] data)
         {
             Data.Add(data);
-            DataGroupCount++;
         }
 
         public void SetType(FaceType type)
