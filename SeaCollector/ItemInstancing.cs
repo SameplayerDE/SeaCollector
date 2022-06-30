@@ -66,11 +66,15 @@ namespace SeaCollector
 
         private void GenerateInstanceVertexDeclaration()
         {
-            VertexElement[] instanceStreamElements = new VertexElement[1];
+            VertexElement[] instanceStreamElements = new VertexElement[2];
 
             instanceStreamElements[0] =
                 new VertexElement(0, VertexElementFormat.Vector4,
                     VertexElementUsage.Position, 1);
+            
+            instanceStreamElements[1] =
+                new VertexElement(0, VertexElementFormat.Vector3,
+                    VertexElementUsage.TextureCoordinate, 1);
 
             instanceVertexDeclaration = new VertexDeclaration(instanceStreamElements);
         }
