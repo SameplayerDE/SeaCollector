@@ -189,10 +189,12 @@ namespace SeaCollector
         
         private void GenerateIslandNoise()
         {
-            _islandNoiseMain.SetNoiseType(FastNoiseLite.NoiseType.Cellular);
+            _islandNoiseMain.SetNoiseType(FastNoiseLite.NoiseType.Perlin);
 
             _islandNoiseMain.SetCellularJitter(1f);
-            _islandNoiseMain.SetFrequency(0.08f);
+            _islandNoiseMain.SetFrequency(0.09f);
+            _islandNoiseMain.SetFractalOctaves(20);
+            _islandNoiseMain.SetFractalType(FastNoiseLite.FractalType.FBm);
             _islandNoiseMain.SetSeed(DateTime.Now.Millisecond);
             
             _islandNoiseMain.SetCellularDistanceFunction(FastNoiseLite.CellularDistanceFunction.EuclideanSq);
@@ -212,32 +214,40 @@ namespace SeaCollector
             
             _islandNoiseFeatures0.SetSeed(DateTime.Now.Millisecond);
 
-            var texture = new Texture2D(GraphicsDevice, 100, 100);
-            var data = new Color[100 * 100];
-            _islandNoiseResultValues = new float[100 * 100];
+            var texture = new Texture2D(GraphicsDevice, 1000, 1000);
+            var data = new Color[1000 * 1000];
+            _islandNoiseResultValues = new float[1000 * 1000];
 
             var min = 0f;
             var max = 0f;
             
-            for (var y = 0; y < 100; y++)
+            for (var y = 0; y < 1000; y++)
             {
-                for (var x = 0; x < 100; x++)
+                for (var x = 0; x < 1000; x++)
                 {
-                    var noiseMainValue = 1 - _islandNoiseMain.GetNoise(x, y);
+                    var noiseResult = 1f;
+                    
+                    var noiseMainValue = -_islandNoiseMain.GetNoise(x, y);
                     var noiseFeatureValue0 = _islandNoiseFeatures0.GetNoise(x, y);
 
-                    var noiseResult = noiseMainValue / noiseFeatureValue0 * 5;
-                    noiseResult = Math.Clamp(noiseResult, 0, 1);
+                    noiseResult = noiseMainValue;
+                    
+                    //noiseResult = noiseMainValue / noiseFeatureValue0 * 5;
+                    //noiseResult = Math.Clamp(noiseResult, 0, 1);
 
-                    if (noiseResult < 1f)
+                    if (noiseResult < 0.5f)
                     {
-                        //noiseResult = 0f;
+                        noiseResult = 0f;
+                    }
+                    else
+                    {
+                        noiseResult = 1f;
                     }
                     
                     var color = new Color(noiseResult, noiseResult, noiseResult);
-                    _islandNoiseResultValues[x + 100 * y] = noiseResult;
+                    _islandNoiseResultValues[x + 1000 * y] = noiseResult;
 
-                    data[x + 100 * y] = color;
+                    data[x + 1000 * y] = color;
                     
                     if (noiseResult < min)
                     {
@@ -438,7 +448,7 @@ namespace SeaCollector
             _sea.Draw(GraphicsDevice, _seaShader, _world, _view, _projection);
             _seaPlane.Draw(GraphicsDevice, _diffuseShader, _world, _view, _projection);
 
-            _instancing.Draw(ref _world, ref _view, ref _projection, _camera.Position, _player.Position, _player.Position, GraphicsDevice);
+            _instancing.Draw(ref _world, ref _view, ref _projection, _camera.Position, _player.Position, _player.Position, GraphicsDevice, gameTime);
             
             /*for (var index = _items.Count - 1; index >= 0; index--)
             {

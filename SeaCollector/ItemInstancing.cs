@@ -55,11 +55,11 @@ namespace SeaCollector
             var list = new List<Vector4>();
             var rnd = new Random();
 
-            for (var y = 0; y < 100; y++)
+            for (var y = 0; y < 1000; y++)
             {
-                for (var x = 0; x < 100; x++)
+                for (var x = 0; x < 1000; x++)
                 {
-                    var noiseValue = _islandNoiseResultValues[x + 100 * y];
+                    var noiseValue = _islandNoiseResultValues[x + 1000 * y];
                     if (noiseValue > 0.9f)
                     {
                         list.Add(
@@ -99,7 +99,7 @@ namespace SeaCollector
         }
 
         public void Draw(ref Matrix world, ref Matrix view, ref Matrix projection, Vector3 cameraPos,
-            Vector3 playerPosition, Vector3 fogCenter, GraphicsDevice device)
+            Vector3 playerPosition, Vector3 fogCenter, GraphicsDevice device, GameTime gameTime)
         {
             //device.Clear(Color.CornflowerBlue);
 
@@ -110,6 +110,8 @@ namespace SeaCollector
             effect.Parameters["CameraPosition"].SetValue(cameraPos);
             effect.Parameters["PlayerPosition"]?.SetValue(playerPosition);
             effect.Parameters["FogCenter"]?.SetValue(fogCenter);
+            effect.Parameters["Total"]?.SetValue((float)gameTime.TotalGameTime.TotalSeconds);
+            effect.Parameters["Delta"]?.SetValue((float)gameTime.ElapsedGameTime.TotalSeconds);
 
             device.Indices = Mesh.IndexBuffer;
 

@@ -137,6 +137,9 @@ matrix Projection;
 float3 CameraPosition;
 float3 PlayerPosition;
 
+float Delta;
+float Total;
+
 float3 AmbientLightColor = float3(.15, .15, .15);
 float3 DiffuseColor;
 float3 LightPosition = float3(0, 0, 0);
@@ -171,6 +174,9 @@ VertexShaderOutput InstancingVS(VertexShaderInput input, float4 instanceTransfor
 	float2 textureCoordinate = input.TextureCoordinate;
 
     float4 worldPosition = mul(position, World);
+    
+    worldPosition.y += cos(Total + worldPosition.x + worldPosition.y) * 0.05;
+    
     float4 viewPosition = mul(worldPosition, View);
     
     output.Position = mul(viewPosition, Projection);
