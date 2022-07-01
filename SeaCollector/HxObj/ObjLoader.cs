@@ -36,6 +36,7 @@ namespace SeaCollector.HxObj
             var result = new ObjFile();
             
             var name = string.Empty;
+            var materials = new List<string>();
             var normals = new List<float[]>();
             var uvs = new List<float[]>();
             var vertices = new List<float[]>();
@@ -55,6 +56,12 @@ namespace SeaCollector.HxObj
                     name = values[0];
                 }
 
+                if (type.Equals("mtllib"))
+                {
+                    //material
+                    materials.Add(values[0]);
+                }
+                
                 if (type.Equals("v"))
                 {
                     //vertex

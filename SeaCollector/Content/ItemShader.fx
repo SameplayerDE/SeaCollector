@@ -1,4 +1,5 @@
-﻿#if OPENGL
+﻿/*
+#if OPENGL
 	#define SV_POSITION POSITION
 	#define VS_SHADERMODEL vs_3_0
 	#define PS_SHADERMODEL ps_3_0
@@ -118,4 +119,92 @@ technique BasicColorDrawing
 		ZEnable = true;
         ZWriteEnable = true;
 	}
+};*/
+#if OPENGL
+	#define SV_POSITION POSITION
+	#define VS_SHADERMODEL vs_3_0
+	#define PS_SHADERMODEL ps_3_0
+#else
+	#define VS_SHADERMODEL vs_4_0_level_9_1
+	#define PS_SHADERMODEL ps_4_0_level_9_1
+#endif
+
+
+matrix World;
+matrix View;
+matrix Projection;
+
+float3 CameraPosition;
+float3 PlayerPosition;
+
+float3 AmbientLightColor = float3(.15, .15, .15);
+float3 DiffuseColor;
+float3 LightPosition = float3(0, 0, 0);
+float3 LightColor = float3(1, 1, 1);
+float LightAttenuation = 2;
+float LightFalloff = 2;
+
+struct VertexShaderInput
+{
+	float4 Position : POSITION0;
+	float4 Color : COLOR0;
+	float3 Normal : NORMAL0;
+	float2 TextureCoordinate : TEXCOORD0;
 };
+
+struct VertexShaderOutput
+{
+	float4 Position : SV_POSITION;
+	float4 Color : COLOR0;
+	float4 Normal : TEXCOORD0;
+	float2 TextureCoordinate : TEXCOORD1;
+    float4 WorldPosition : TEXCOORD2;
+};
+
+VertexShaderOutput InstancingVS(VertexShaderInput input)
+{
+    VertexShaderOutput output;
+
+    float4 position = input.Position;
+	float4 color = input.Color;
+	float3 normals = input.Normal;
+	float2 textureCoordinate = input.TextureCoordinate;
+
+    float4 worldPosition = mul(position, World);
+    float4 viewPosition = mul(worldPosition, View);
+    
+    output.Position = mul(viewPosition, Projection);
+    output.Normal = mul(normals, World);
+    output.Color = color;
+    output.TextureCoordinate = textureCoordinate;
+    output.WorldPosition = worldPosition;
+	
+    return output;
+}
+
+float4 InstancingPS(VertexShaderOutput input) : COLOR0
+{
+    float3 diffuseColor = input.Color;
+
+     float3 totalLight = float3(0, 0, 0);
+     
+     totalLight += AmbientLightColor;
+     
+     float3 lightDir = normalize(PlayerPosition - input.WorldPosition);
+     float diffuse = saturate(dot(normalize(input.Normal), lightDir));
+     float d = distance(PlayerPosition, input.WorldPosition);
+     float att = 1 - pow(clamp(d / LightAttenuation, 0, 1), 
+     LightFalloff); 
+     totalLight += diffuse * att * LightColor;
+     return float4(diffuseColor * totalLight, 1);
+}
+
+technique Instancing
+{
+    pass Pass0
+    {
+        VertexShader = compile VS_SHADERMODEL InstancingVS();
+        PixelShader = compile PS_SHADERMODEL InstancingPS();
+        CullMode = NONE;
+    }
+}

@@ -1,20 +1,13 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.IO;
-using System.Runtime.InteropServices.ComTypes;
 using HxInput;
 using Microsoft.Xna.Framework;
 using Microsoft.Xna.Framework.Audio;
 using Microsoft.Xna.Framework.Graphics;
 using Microsoft.Xna.Framework.Input;
 using SeaCollector.Entities;
-using SeaCollector.HxPly;
 using SeaCollector.Rendering;
-using Color = Microsoft.Xna.Framework.Color;
-using Matrix = Microsoft.Xna.Framework.Matrix;
-using Rectangle = Microsoft.Xna.Framework.Rectangle;
-using Vector2 = Microsoft.Xna.Framework.Vector2;
-using Vector3 = Microsoft.Xna.Framework.Vector3;
 
 namespace SeaCollector
 {
@@ -30,6 +23,7 @@ namespace SeaCollector
         private Effect _itemShader;
         private Effect _playerShader;
         private Effect _mapShader;
+        private Effect _diffuseShader;
 
         private Matrix _view;
         private Matrix _projection;
@@ -43,11 +37,12 @@ namespace SeaCollector
         private GameMesh _sailMesh;
         private GameMesh _seaMesh;
         private GameMesh _itemMesh;
-        private GameMesh _trashMesh;
+        private GameMesh _seaPlaneMesh;
 
         private Player _player;
         private GameObject _object;
         private GameObject _sea;
+        private GameObject _seaPlane;
 
         private SoundEffect _soundEffect;
         
@@ -89,8 +84,10 @@ namespace SeaCollector
             _graphicsDeviceManager.PreferredBackBufferFormat = SurfaceFormat.Color;
             _graphicsDeviceManager.PreferredDepthStencilFormat = DepthFormat.Depth24; // <-- set depth here
             _graphicsDeviceManager.ApplyChanges();
+
+            GenerateIslandNoise();
             
-            _instancing = new ItemInstancing();
+            _instancing = new ItemInstancing(_islandNoiseResultValues);
             _instancing.Initialize(GraphicsDevice);
             _instancing.Load(Content);
             
@@ -105,16 +102,20 @@ namespace SeaCollector
             _seaMesh = GameMesh.LoadFromFile(GraphicsDevice, "Content/sea.ply");
             _sailMesh = GameMesh.LoadFromFile(GraphicsDevice, "Content/sail.ply");
             _itemMesh = GameMesh.LoadFromFile(GraphicsDevice, "Content/cube.obj");
-            _trashMesh = GameMesh.LoadFromFile(GraphicsDevice, "Content/trash.ply");
+            _seaPlaneMesh = GameMesh.LoadFromFile(GraphicsDevice, "Content/sea_plane.ply");
             
             _seaShader = Content.Load<Effect>("SeaShader");
             _itemShader = Content.Load<Effect>("ItemShader");
             _playerShader = Content.Load<Effect>("PlayerShader");
             _mapShader = Content.Load<Effect>("MapShader");
+            _diffuseShader = Content.Load<Effect>("DiffuseShader");
 
             _soundEffect = Content.Load<SoundEffect>("Sounds/collect");
 
             _playerMap = Content.Load<Texture2D>("player_Map");
+
+            _seaPlane = new GameObject();
+            _seaPlane.Mesh = _seaPlaneMesh;
             
             _player = new Player();
             _player.Mesh = _ship;
@@ -129,8 +130,6 @@ namespace SeaCollector
                 new Vector3(0, 0, 0),
                 new Vector3(0, 0, 0), GraphicsDevice);
             
-            GenerateIslandNoise();
-            
             _noise.SetNoiseType(FastNoiseLite.NoiseType.OpenSimplex2);
             _noise.SetFrequency(0.01f);
             
@@ -140,7 +139,7 @@ namespace SeaCollector
 
             _seaShader.Parameters["Texture"]?.SetValue(Content.Load<Texture>("waves"));
 
-            for (var y = 0; y < 100; y++)
+            /*for (var y = 0; y < 100; y++)
             {
                 for (var x = 0; x < 100; x++)
                 {
@@ -156,7 +155,7 @@ namespace SeaCollector
                         );
                     }
                 }
-            }
+            }*/
 
             base.LoadContent();
         }
@@ -339,7 +338,7 @@ namespace SeaCollector
 
                 _player.Position += Vector3.Transform(velocity, rotationMatrix);
             }
-
+/*
             for (var index = _items.Count - 1; index >= 0; index--)
             {
                 var item = _items[index];
@@ -361,7 +360,7 @@ namespace SeaCollector
                     //_player.Scale.Z = Math.Clamp(_player.Scale.Z, 1, 3); 
                     //_soundEffect.Play(0.5f, _random.NextFloat(0, 1), 0);
                 }
-            }
+            }*/
 
             // ReSharper disable once HeapView.BoxingAllocation
             //Window.Title = $"{1 / (float)gameTime.ElapsedGameTime.TotalSeconds}";
@@ -369,6 +368,7 @@ namespace SeaCollector
             updateCamera(gameTime);
             // = _player.Position + new Vector3(0, 15, 1) + _cameraOffset;
             _sea.Position = _player.Position;
+            _seaPlane.Position = _player.Position;
             _object.Position = _player.Position;
             _object.Scale = new Vector3(1, _player.SailFactor, 1);
             _object.Rotation = new Vector3(0, 0, 0) + _player.Rotation;
@@ -389,6 +389,10 @@ namespace SeaCollector
 
             _camera.Frustum = new BoundingFrustum(_view * _projection);
 
+            _diffuseShader.Parameters["World"]?.SetValue(_world);
+            _diffuseShader.Parameters["View"]?.SetValue(_view);
+            _diffuseShader.Parameters["Projection"]?.SetValue(_projection);
+            
             _playerShader.Parameters["World"]?.SetValue(_world);
             _playerShader.Parameters["View"]?.SetValue(_view);
             _playerShader.Parameters["Projection"]?.SetValue(_projection);
@@ -432,8 +436,9 @@ namespace SeaCollector
             _player.Draw(GraphicsDevice, _playerShader, _world, _view, _projection);
             _object.Draw(GraphicsDevice, _playerShader, _world, _view, _projection);
             _sea.Draw(GraphicsDevice, _seaShader, _world, _view, _projection);
+            _seaPlane.Draw(GraphicsDevice, _diffuseShader, _world, _view, _projection);
 
-            _instancing.Draw(ref _world, ref _view, ref _projection, _camera.Position, GraphicsDevice);
+            _instancing.Draw(ref _world, ref _view, ref _projection, _camera.Position, _player.Position, _player.Position, GraphicsDevice);
             
             /*for (var index = _items.Count - 1; index >= 0; index--)
             {
@@ -446,7 +451,7 @@ namespace SeaCollector
                         item.Draw(GraphicsDevice, _itemShader, _world, _view, _projection);
                     }
                 }
-            }
+            }*/
 
             if (showMap)
             {
@@ -458,7 +463,7 @@ namespace SeaCollector
                 _spriteBatch.Draw(_playerMap, new Vector2(25 + _player.Position.X * 4, 25 + _player.Position.Z * 4),
                     null, Color.White, -_player.Rotation.Y, new Vector2(16, 16), 0.5f, SpriteEffects.None, 1f);
                 _spriteBatch.End();
-            }*/
+            }
         }
     }
 }

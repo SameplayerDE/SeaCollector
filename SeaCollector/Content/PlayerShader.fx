@@ -21,7 +21,7 @@ float3 DiffuseColor = float3(1, 1, 1);
 float3 AmbientColor = float3(0.1, 0.1, 0.1) * 6;
 float3 LightDirection = float3(1, 1, 0);
 float3 LightColor = float3(0.9, 0.9, 0.9);
-float SpecularPower = 256;
+float SpecularPower = 128;
 float3 SpecularColor = float3(1, 1, 1);
 
 float FogStart = 25;
