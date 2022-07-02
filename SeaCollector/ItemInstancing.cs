@@ -35,7 +35,7 @@ namespace SeaCollector
 
         public void Load(ContentManager Content)
         {
-            effect = Content.Load<Effect>("InstanceShader");
+            effect = Content.Load<Effect>("Effects/InstanceShader");
         }
 
         public void Initialize(GraphicsDevice device)
@@ -53,17 +53,16 @@ namespace SeaCollector
         {
             
             var list = new List<Vector4>();
-            var rnd = new Random();
 
-            for (var y = 0; y < 1000; y++)
+            for (var y = 0; y < 100; y++)
             {
-                for (var x = 0; x < 1000; x++)
+                for (var x = 0; x < 100; x++)
                 {
-                    var noiseValue = _islandNoiseResultValues[x + 1000 * y];
-                    if (noiseValue > 0.9f)
+                    var noiseValue = _islandNoiseResultValues[x + 100 * y];
+                    if (noiseValue > 0.5f)
                     {
                         list.Add(
-                            new Vector4(x, 0, y, 0) * 0.5f
+                            new Vector4(-50 + x, 0, -50 + y, 0)
                         );
                     }
                 }
@@ -84,7 +83,7 @@ namespace SeaCollector
 
         private void GenerateGeometry(GraphicsDevice device)
         {
-            Mesh = GameMesh.LoadFromFile(device, "Content/cube.obj");
+            Mesh = GameMesh.LoadFromFile(device, "Content/Models/cube.obj");
         }
 
         private void GenerateInstanceVertexDeclaration()

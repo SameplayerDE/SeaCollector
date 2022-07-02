@@ -57,7 +57,7 @@ VertexShaderOutput MainVS(in VertexShaderInput input)
 
     float4 worldPosition = mul(position, World);
     
-    worldPosition.y += cos(Total + worldPosition.x + worldPosition.y) * 0.05;
+    //worldPosition.y += cos(Total + worldPosition.x + worldPosition.y) * 0.05;
     
     float4 viewPosition = mul(worldPosition, View);
 

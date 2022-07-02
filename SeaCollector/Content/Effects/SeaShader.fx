@@ -64,8 +64,8 @@ VertexShaderOutput MainVS(in VertexShaderInput input)
     
     float4 worldPosition = mul(position, World);
     
-    worldPosition.x += sin(Total + worldPosition.x + worldPosition.y) * 0.05;
-    worldPosition.y += cos(Total + worldPosition.x + worldPosition.y) * 0.05;
+    //worldPosition.x += sin(Total + worldPosition.x + worldPosition.y) * 0.05;
+    //worldPosition.y += cos(Total + worldPosition.x + worldPosition.y) * 0.05;
     
     float4 viewPosition = mul(worldPosition, View);
 
@@ -73,7 +73,9 @@ VertexShaderOutput MainVS(in VertexShaderInput input)
     textureUVs *= scale;
     
     textureUVs += Offset / (20 / scale);
-    viewPosition /= 10;
+    //viewPosition /= 10;
+    //textureUVs.x += sin(Total + worldPosition.x + worldPosition.y) * 0.05;
+    //textureUVs.y += cos(Total + worldPosition.x + worldPosition.y) * 0.05;
     //textureUVs.x += sin(Total + viewPosition.x + viewPosition.y) * 0.05;
     //textureUVs.y += cos(Total + viewPosition.x + viewPosition.y) * 0.05;
     

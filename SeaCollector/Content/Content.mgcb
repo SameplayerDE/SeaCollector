@@ -13,53 +13,47 @@
 
 #---------------------------------- Content ---------------------------------#
 
-#begin DiffuseShader.fx
+#begin Effects/DiffuseShader.fx
 /importer:EffectImporter
 /processor:EffectProcessor
 /processorParam:DebugMode=Auto
-/build:DiffuseShader.fx
+/build:Effects/DiffuseShader.fx
 
-#begin InstanceShader.fx
+#begin Effects/InstanceShader.fx
 /importer:EffectImporter
 /processor:EffectProcessor
 /processorParam:DebugMode=Auto
-/build:InstanceShader.fx
+/build:Effects/InstanceShader.fx
 
-#begin ItemShader.fx
+#begin Effects/IslandShader.fx
 /importer:EffectImporter
 /processor:EffectProcessor
 /processorParam:DebugMode=Auto
-/build:ItemShader.fx
+/build:Effects/IslandShader.fx
 
-#begin MapShader.fx
+#begin Effects/ItemShader.fx
 /importer:EffectImporter
 /processor:EffectProcessor
 /processorParam:DebugMode=Auto
-/build:MapShader.fx
+/build:Effects/ItemShader.fx
 
-#begin player_map.png
-/importer:TextureImporter
-/processor:TextureProcessor
-/processorParam:ColorKeyColor=255,0,255,255
-/processorParam:ColorKeyEnabled=True
-/processorParam:GenerateMipmaps=False
-/processorParam:PremultiplyAlpha=True
-/processorParam:ResizeToPowerOfTwo=False
-/processorParam:MakeSquare=False
-/processorParam:TextureFormat=Color
-/build:player_map.png
-
-#begin PlayerShader.fx
+#begin Effects/MapShader.fx
 /importer:EffectImporter
 /processor:EffectProcessor
 /processorParam:DebugMode=Auto
-/build:PlayerShader.fx
+/build:Effects/MapShader.fx
 
-#begin SeaShader.fx
+#begin Effects/PlayerShader.fx
 /importer:EffectImporter
 /processor:EffectProcessor
 /processorParam:DebugMode=Auto
-/build:SeaShader.fx
+/build:Effects/PlayerShader.fx
+
+#begin Effects/SeaShader.fx
+/importer:EffectImporter
+/processor:EffectProcessor
+/processorParam:DebugMode=Auto
+/build:Effects/SeaShader.fx
 
 #begin Sounds/collect.ogg
 /importer:OggImporter
@@ -67,13 +61,7 @@
 /processorParam:Quality=Best
 /build:Sounds/collect.ogg
 
-#begin VP.fx
-/importer:EffectImporter
-/processor:EffectProcessor
-/processorParam:DebugMode=Auto
-/build:VP.fx
-
-#begin waves.png
+#begin Textures/player_map.png
 /importer:TextureImporter
 /processor:TextureProcessor
 /processorParam:ColorKeyColor=255,0,255,255
@@ -83,5 +71,29 @@
 /processorParam:ResizeToPowerOfTwo=False
 /processorParam:MakeSquare=False
 /processorParam:TextureFormat=Color
-/build:waves.png
+/build:Textures/player_map.png
+
+#begin Textures/water_map.png
+/importer:TextureImporter
+/processor:TextureProcessor
+/processorParam:ColorKeyColor=255,0,255,255
+/processorParam:ColorKeyEnabled=True
+/processorParam:GenerateMipmaps=False
+/processorParam:PremultiplyAlpha=True
+/processorParam:ResizeToPowerOfTwo=False
+/processorParam:MakeSquare=False
+/processorParam:TextureFormat=Color
+/build:Textures/water_map.png
+
+#begin Textures/waves.png
+/importer:TextureImporter
+/processor:TextureProcessor
+/processorParam:ColorKeyColor=255,0,255,255
+/processorParam:ColorKeyEnabled=True
+/processorParam:GenerateMipmaps=False
+/processorParam:PremultiplyAlpha=True
+/processorParam:ResizeToPowerOfTwo=False
+/processorParam:MakeSquare=False
+/processorParam:TextureFormat=Color
+/build:Textures/waves.png
 

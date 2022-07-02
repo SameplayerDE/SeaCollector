@@ -16,7 +16,7 @@ namespace SeaCollector.Entities
         {
             
             graphicsDevice.RasterizerState = RasterizerState.CullClockwise;
-            graphicsDevice.BlendState = BlendState.NonPremultiplied;
+            graphicsDevice.BlendState = BlendState.AlphaBlend;
             
             var l_world = world;
             var l_view = view;
