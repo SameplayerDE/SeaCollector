@@ -176,7 +176,9 @@ namespace SeaCollector.HxPly
                                 value.ReadAllData = true;
                                 dataCounter = 0;
                                 elementIndex++;
+#if DEBUG
                                 Console.WriteLine("vertex data has been read!");
+#endif
                             }
                         }
                         else if (value.Type == ElementType.Face)
@@ -208,7 +210,9 @@ namespace SeaCollector.HxPly
                                 value.ReadAllData = true;
                                 dataCounter = 0;
                                 elementIndex++;
+#if DEBUG
                                 Console.WriteLine("face data has been read!");
+#endif
                             }
                         }
                     }

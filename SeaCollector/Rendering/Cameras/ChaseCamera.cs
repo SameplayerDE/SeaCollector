@@ -2,7 +2,7 @@
 using Microsoft.Xna.Framework;
 using Microsoft.Xna.Framework.Graphics;
 
-namespace SeaCollector
+namespace SeaCollector.Rendering.Cameras
 {
     public class ChaseCamera : Camera
     {
