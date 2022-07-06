@@ -2,15 +2,14 @@ using System.Collections.Generic;
 
 namespace SeaCollector.HxObj
 {
-    public class ObjFile
+    public class Obj
     {
+        public ObjFile ParentFile;
         public string Name;
-        public List<MtlFile> Materials;
+        public MaterialData Material;
         public List<float[]> Vertices;
         public List<float[]> UVs;
         public List<float[]> Normals;
         public List<Face> Faces;
-        public List<Obj> Objects;
-        
     }
 }

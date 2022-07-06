@@ -14,6 +14,14 @@ namespace SeaCollector.Rendering
         public IndexBuffer IndexBuffer; //IndexBuffer
         public VertexPositionNormalColorTexture[] Data;
 
+        public List<GameMeshPart> MeshParts;
+
+        public GameMesh()
+        {
+            // ReSharper disable once HeapView.ObjectAllocation.Evident
+            MeshParts = new List<GameMeshPart>();
+        }
+
         public static GameMesh LoadFromFile(GraphicsDevice graphicsDevice, string path)
         {
             var result = new GameMesh();
@@ -39,6 +47,7 @@ namespace SeaCollector.Rendering
                 var file = PlyLoader.Load(path);
 
                 var list = new List<VertexPositionNormalColorTexture>();
+                var meshPart = new GameMeshPart();
 
                 foreach (var indexSet in file.IndexData)
                 {
@@ -105,6 +114,21 @@ namespace SeaCollector.Rendering
                 );*/
 
                 var listArray = list.ToArray();
+                meshPart.VertexBuffer = new VertexBuffer(graphicsDevice, VertexPositionNormalColorTexture.VertexDeclaration,
+                    result.Data.Length, BufferUsage.WriteOnly);
+
+                meshPart.IndexBuffer = new IndexBuffer(graphicsDevice, IndexElementSize.ThirtyTwoBits, result.Data.Length,
+                    BufferUsage.WriteOnly);
+            
+                var meshIndices = new int [result.Data.Length];
+                for (var i = 0; i < meshIndices.Length; i++)
+                {
+                    meshIndices[i] = i;
+                }
+            
+                meshPart.VertexBuffer.SetData(result.Data);
+                meshPart.IndexBuffer.SetData(meshIndices);
+                result.MeshParts.Add(meshPart);
                 //VertexPositionNormalColorTexture.CalculateNormals(listArray);
                 result.Data = listArray;
             }
