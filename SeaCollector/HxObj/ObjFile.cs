@@ -10,7 +10,7 @@ namespace SeaCollector.HxObj
         public List<float[]> UVs;
         public List<float[]> Normals;
         public List<Face> Faces;
-        public List<Obj> Objects;
+        public List<ObjPart> ObjectParts;
         
     }
 }

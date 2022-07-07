@@ -34,6 +34,8 @@ namespace SeaCollector
         private Texture2D _texture0;
         private Effect _shader0;
 
+        private Model _model;
+
         public Application()
         {
             Content.RootDirectory = "Content";
@@ -67,7 +69,8 @@ namespace SeaCollector
         protected override void LoadContent()
         {
             _spriteBatch = new SpriteBatch(GraphicsDevice);
-            
+            _model = Content.Load<Model>("hull_0");
+            var mesh = GameMesh.LoadFromFile(_graphicsDeviceManager.GraphicsDevice, "Content/untitled.obj");
             _gameMesh0 = GameMesh.LoadFromFile(_graphicsDeviceManager.GraphicsDevice, "Content/Models/Hulls/hull_0.obj");
             _shader0 = Content.Load<Effect>("Effects/TextureCellShader");
             _texture0 = Content.Load<Texture2D>("Models/Hulls/sp_hul01");
@@ -80,6 +83,22 @@ namespace SeaCollector
             base.LoadContent();
         }
 
+        private void DrawModel(Model model, Matrix world, Matrix view, Matrix projection)
+        {
+            foreach (var mesh in model.Meshes)
+            {
+                foreach (var effect1 in mesh.Effects)
+                {
+                    var effect = (BasicEffect)effect1;
+                    effect.World = world;
+                    effect.View = view;
+                    effect.Projection = projection;
+                }
+ 
+                mesh.Draw();
+            }
+        }
+        
         protected override void Update(GameTime gameTime)
         {
             Input.Instance.Update(gameTime);
@@ -146,16 +165,17 @@ namespace SeaCollector
         {
             
             var rasterizerState = new RasterizerState();
-            rasterizerState.CullMode = CullMode.CullClockwiseFace;
+            rasterizerState.CullMode = CullMode.None;
             GraphicsDevice.RasterizerState = rasterizerState;
             GraphicsDevice.DepthStencilState = DepthStencilState.Default;
             
             GraphicsDevice.SetRenderTarget(_renderTarget);
             GraphicsDevice.Clear(new Color(78, 202, 255));
             _shader0.Parameters["Texture00"]?.SetValue(_texture0);
-            _gameObject0.Draw(_graphicsDeviceManager.GraphicsDevice, _shader0, _world, _camera.View, _camera.Projection);
+            //_gameObject0.Draw(_graphicsDeviceManager.GraphicsDevice, _shader0, _world, _camera.View, _camera.Projection);
+            DrawModel(_model, _world, _camera.View, _camera.Projection);
             GraphicsDevice.SetRenderTarget(null);
-            
+
             _spriteBatch.Begin(SpriteSortMode.Deferred, BlendState.AlphaBlend, SamplerState.PointClamp, DepthStencilState.Default, RasterizerState.CullCounterClockwise);
             _spriteBatch.Draw(_renderTarget, GraphicsDevice.PresentationParameters.Bounds, Color.White);
             _spriteBatch.End();

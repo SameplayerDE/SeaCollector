@@ -5,6 +5,8 @@ namespace SeaCollector.HxObj
     public class Face
     {
         public FaceType Type;
+        public MaterialData Material;
+        public string MaterialName;
         public int DataGroupCount => Data.Count;
         public readonly List<int[]> Data;
 

@@ -42,6 +42,16 @@ namespace SeaCollector.HxObj
             var vertices = new List<float[]>();
             var faces = new List<Face>();
 
+            var objParts = new List<ObjPart>();
+            ObjPart current = null;
+
+            var objOffset = 0;
+            var vertexOffset = 0;
+            var normalOffset = 0;
+            var uvOffset = 0;
+
+            var materialName = string.Empty;
+
             var lines = File.ReadAllLines(path);
             foreach (var line in lines)
             {
@@ -53,13 +63,41 @@ namespace SeaCollector.HxObj
                 if (type.Equals("o"))
                 {
                     //name
-                    name = values[0];
+                    if (current != null)
+                    {
+                        current.Vertices = new List<float[]>(vertices);
+                        current.UVs = new List<float[]>(uvs);
+                        current.Normals = new List<float[]>(normals);
+                        current.Faces = new List<Face>(faces);
+                        
+                        objParts.Add(current);
+                        vertexOffset += current.Vertices.Count;
+                        normalOffset += current.Normals.Count;
+                        uvOffset += current.UVs.Count;
+                    }
+                    
+                    faces.Clear();
+                    uvs.Clear();
+                    normals.Clear();
+                    vertices.Clear();
+                    
+                    current = new ObjPart();
+                    current.Name = values[0];
                 }
 
                 if (type.Equals("mtllib"))
                 {
                     //material
                     materials.Add(MtlLoader.Load(path.Replace(Path.GetFileName(path), values[0].Replace(",", "."))));
+                }
+                
+                if (type.Equals("usemtl"))
+                {
+                    materialName = values[0].Replace(",", ".");
+                    //material
+                    //current.Material = materials.Last().Materials[values[0].Replace(",", ".")];
+                    //current.MaterialName = values[0].Replace(",", ".");
+                    //materials.Add(MtlLoader.Load(path.Replace(Path.GetFileName(path), values[0].Replace(",", "."))));
                 }
                 
                 if (type.Equals("v"))
@@ -99,6 +137,9 @@ namespace SeaCollector.HxObj
                         {
                             // ReSharper disable once HeapView.DelegateAllocation
                             var indices = Array.ConvertAll(value.Split("/"), int.Parse);
+                            indices[0] -= vertexOffset;
+                            indices[1] -= uvOffset;
+                            indices[2] -= normalOffset;
 #if DEBUG
                             Console.WriteLine(string.Join(",", indices));
 #endif
@@ -147,16 +188,28 @@ namespace SeaCollector.HxObj
                             face.AddData(new [] {index});
                         }
                     }
+                    face.MaterialName = materialName;
                     faces.Add(face);
                 }
             }
 
+            if (current != null)
+            {
+                current.Vertices = new List<float[]>(vertices);
+                current.UVs = new List<float[]>(uvs);
+                current.Normals = new List<float[]>(normals);
+                current.Faces = new List<Face>(faces);
+                        
+                objParts.Add(current);
+            }
+            
             result.Name = name;
-            result.Materials = materials;
+            result.Materials = new List<MtlFile>(materials);
             result.Vertices = vertices;
             result.UVs = uvs;
             result.Normals = normals;
             result.Faces = faces;
+            result.ObjectParts = new List<ObjPart>(objParts);
             
             return result;
         }
