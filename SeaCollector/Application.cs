@@ -489,7 +489,7 @@ namespace SeaCollector
             _sea.Draw(GraphicsDevice, _seaShader, _world, _view, _projection);
             _seaPlane.Draw(GraphicsDevice, _diffuseShader, _world, _view, _projection);
 
-            _instancing.Draw(ref _world, ref _view, ref _projection, _camera.Position, _player.Position, _player.Position, GraphicsDevice, gameTime);
+            _instancing.Draw(_camera, ref _world, ref _view, ref _projection, _camera.Position, _player.Position, _player.Position, GraphicsDevice, gameTime);
             
             /*for (var index = _items.Count - 1; index >= 0; index--)
             {

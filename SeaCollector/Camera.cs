@@ -8,6 +8,8 @@ namespace SeaCollector
         public Matrix View { get; set; }
         public Matrix Projection { get; set; }
         protected GraphicsDevice GraphicsDevice { get; set; }
+        
+        public BoundingFrustum Frustum;
  
         public Camera(GraphicsDevice graphicsDevice)
         {

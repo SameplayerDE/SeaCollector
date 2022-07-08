@@ -97,7 +97,7 @@ namespace SeaCollector
             instanceVertexDeclaration = new VertexDeclaration(instanceStreamElements);
         }
 
-        public void Draw(ref Matrix world, ref Matrix view, ref Matrix projection, Vector3 cameraPos,
+        public void Draw(Camera camera, ref Matrix world, ref Matrix view, ref Matrix projection, Vector3 cameraPos,
             Vector3 playerPosition, Vector3 fogCenter, GraphicsDevice device, GameTime gameTime)
         {
             //device.Clear(Color.CornflowerBlue);
