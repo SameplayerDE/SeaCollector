@@ -60,7 +60,7 @@ namespace SeaCollector.HxObj
                 var type = split[0];
                 var values = split[1..];
 
-                if (type.Equals("o"))
+                /*if (type.Equals("o"))
                 {
                     //name
                     if (current != null)
@@ -83,7 +83,7 @@ namespace SeaCollector.HxObj
                     
                     current = new ObjPart();
                     current.Name = values[0];
-                }
+                }*/
 
                 if (type.Equals("mtllib"))
                 {

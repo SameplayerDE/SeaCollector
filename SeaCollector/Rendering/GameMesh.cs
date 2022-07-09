@@ -12,7 +12,9 @@ namespace SeaCollector.Rendering
     {
         public VertexBuffer VertexBuffer; //VertexBuffer
         public IndexBuffer IndexBuffer; //IndexBuffer
+        
         public VertexPositionNormalColorTexture[] Data;
+        public GraphicsDevice GraphicsDevice;
 
         public List<GameMeshPart> MeshParts;
 
@@ -493,6 +495,7 @@ namespace SeaCollector.Rendering
 
             result.VertexBuffer.SetData(result.Data);
             result.IndexBuffer.SetData(indices);
+            result.GraphicsDevice = graphicsDevice;
 
             return result;
         }
@@ -500,6 +503,28 @@ namespace SeaCollector.Rendering
         ~GameMesh()
         {
             Console.WriteLine("Destructor was called");
+        }
+
+        public void Draw(GraphicsDevice graphicsDevice, Effect effect, Matrix world, Matrix view, Matrix projection)
+        {
+            var l_view = view;
+            var l_projection = projection;
+
+            graphicsDevice.SetVertexBuffer(VertexBuffer);
+            graphicsDevice.Indices = IndexBuffer;
+            
+            effect.Parameters["WorldViewProjection"]?.SetValue(world * l_view * l_projection);
+            effect.Parameters["World"]?.SetValue(world);
+            effect.Parameters["View"]?.SetValue(l_view);
+            effect.Parameters["Projection"]?.SetValue(l_projection);
+            
+            foreach (var currentTechniquePass in effect.CurrentTechnique.Passes)
+            {
+                
+                currentTechniquePass.Apply();
+                //graphicsDevice.DrawUserPrimitives(PrimitiveType.TriangleList, Mesh.Data, 0, Mesh.Data.Length / 3);
+                graphicsDevice.DrawIndexedPrimitives(PrimitiveType.TriangleList, 0, 0, Data.Length / 3);
+            }
         }
     }
 }

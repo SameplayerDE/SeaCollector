@@ -12,6 +12,7 @@ matrix View;
 matrix Projection;
 
 float3 LightDirection = float3(0, -1, -1);
+float3 DiffuseColor = float3(1, 1, 1);
 
 Texture2D Texture00 : register(t0);
 sampler Sampler00 : register(s0)
