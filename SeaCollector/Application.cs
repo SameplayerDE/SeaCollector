@@ -1,22 +1,14 @@
 ﻿using System;
-using System.Collections.Generic;
 using System.Diagnostics;
-using System.Globalization;
-using System.IO;
 using HxInput;
 using HxTime;
 using Microsoft.Xna.Framework;
-using Microsoft.Xna.Framework.Audio;
 using Microsoft.Xna.Framework.Graphics;
 using Microsoft.Xna.Framework.Input;
 using SeaCollector.Entities;
 using SeaCollector.Rendering;
 using SeaCollector.Rendering.Cameras;
-using SharpDX;
-using Color = Microsoft.Xna.Framework.Color;
-using Matrix = Microsoft.Xna.Framework.Matrix;
-using Vector2 = Microsoft.Xna.Framework.Vector2;
-using Vector3 = Microsoft.Xna.Framework.Vector3;
+using SeaCollector.Worlds;
 
 namespace SeaCollector
 {
@@ -45,8 +37,14 @@ namespace SeaCollector
         
         private Model _model;
         
-        BillboardSystem trees;
+        private BillboardSystem trees;
+        private BillboardSystem mokutaru;
         private Stopwatch _drawCallWatch;
+
+        private World _world0;
+        private World _world1;
+        
+        
 
         public Application()
         {
@@ -75,12 +73,11 @@ namespace SeaCollector
             _world = Matrix.Identity;
             _camera = new FreeCamera(_graphicsDeviceManager.GraphicsDevice);
             
-            
-            trees = new BillboardSystem(GraphicsDevice, Content, 
-                Content.Load<Texture2D>("Textures/stone"), new Vector2(1));
-            trees.Initialize(GraphicsDevice);
-            trees.Mode = BillboardMode.Spherical;
             _drawCallWatch = new Stopwatch();
+
+            _world0 = new Stage0(GraphicsDevice);
+            _world1 = new Stage1(GraphicsDevice);
+            
             base.Initialize();
         }
 
@@ -96,100 +93,51 @@ namespace SeaCollector
             _gameObject0.Position = Vector3.Zero;
             _gameObject0.Mesh = _gameMesh0;
 
+            trees = new BillboardSystem(GraphicsDevice, Content, Content.Load<Texture2D>("Textures/tree"), new Vector2(1));
+            trees.Initialize(GraphicsDevice);
+            trees.Mode = BillboardMode.Cylindrical;
+            
+            mokutaru = new BillboardSystem(GraphicsDevice, Content, Content.Load<Texture2D>("Textures/mokutaru"), new Vector2(0.1f));
+            mokutaru.Initialize(GraphicsDevice);
+            mokutaru.Mode = BillboardMode.Cylindrical;
+            
             _player = new Player();
             _player.LoadContent(GraphicsDevice, Content);
             
             ((FreeCamera)_camera).Position = new Vector3(1, 1, 1); 
+            
+            _world0.LoadContent(Content);
             
             base.LoadContent();
         }
 
         protected override void Update(GameTime gameTime)
         {
-            Input.Instance.Update(gameTime);
-            Time.Instance.Update(gameTime);
-
-            var direction = new Vector3();
-            
-            if (Input.Instance.IsKeyboardKeyDown(Keys.W))
-            {
-                direction += Vector3.Forward;
-            }
-            if (Input.Instance.IsKeyboardKeyDown(Keys.A))
-            {
-                direction += Vector3.Left;
-            }
-            if (Keyboard.GetState().IsKeyDown(Keys.D))
-            {
-                direction += Vector3.Right;
-            }
-            if (Keyboard.GetState().IsKeyDown(Keys.S))
-            {
-                direction += Vector3.Backward;
-            }
-            if (Keyboard.GetState().IsKeyDown(Keys.Q))
-            {
-                direction += Vector3.Up;
-            }
-            if (Keyboard.GetState().IsKeyDown(Keys.E))
-            {
-                direction += Vector3.Down;
-            }
-            
-            if (Keyboard.GetState().IsKeyDown(Keys.Up))
-            {
-                ((FreeCamera)_camera).RotateX(45 * Time.Instance.DeltaSecondsF);
-            }
-            
-            if (Keyboard.GetState().IsKeyDown(Keys.Down))
-            {
-                ((FreeCamera)_camera).RotateX(-45 * Time.Instance.DeltaSecondsF);
-            }
-            
-            if (Keyboard.GetState().IsKeyDown(Keys.Left))
-            {
-                ((FreeCamera)_camera).RotateY(45 * Time.Instance.DeltaSecondsF);
-            }
-            if (Keyboard.GetState().IsKeyDown(Keys.Right))
-            {
-                ((FreeCamera)_camera).RotateY(-45 * Time.Instance.DeltaSecondsF);
-            }
-
-            if (direction.Length() != 0)
-            {
-                direction.Normalize();
-                direction *= 2f;
-                direction *= Time.Instance.DeltaSecondsF;
-                ((FreeCamera)_camera).Move(direction);
-            }
-            _camera.Update();
-            
+            _world0.Update(gameTime);
         }
 
         protected override void Draw(GameTime gameTime)
         {
-            _drawCallWatch.Start();
-            var rasterizerState = new RasterizerState();
+            _world0.Draw(gameTime);
+            /*var rasterizerState = new RasterizerState();
             rasterizerState.CullMode = CullMode.None;
             GraphicsDevice.RasterizerState = rasterizerState;
             GraphicsDevice.DepthStencilState = DepthStencilState.Default;
             
-            GraphicsDevice.SetRenderTarget(_renderTarget);
-            GraphicsDevice.SetRenderTarget(null);
+
             GraphicsDevice.Clear(new Color(78, 202, 255));
             _shader0.Parameters["Texture00"]?.SetValue(_texture0);
             _player.Draw(_graphicsDeviceManager.GraphicsDevice, _player.Effect, _world, _camera.View, _camera.Projection);
-            //DrawModel(_model, _world, _camera.View, _camera.Projection);
+            
             trees.Draw(_camera.View, _camera.Projection, ((FreeCamera)_camera).Up, 
                Vector3.Cross(((FreeCamera)_camera).Forward, Vector3.Up));
-            GraphicsDevice.SetRenderTarget(null);
+            mokutaru.Draw(_camera.View, _camera.Projection, ((FreeCamera)_camera).Up, 
+               Vector3.Cross(((FreeCamera)_camera).Forward, Vector3.Up));
             
-            _spriteBatch.Begin(SpriteSortMode.Deferred, BlendState.AlphaBlend, SamplerState.PointClamp, DepthStencilState.Default, RasterizerState.CullCounterClockwise);
+            //_spriteBatch.Begin(SpriteSortMode.Deferred, BlendState.AlphaBlend, SamplerState.PointClamp, DepthStencilState.Default, RasterizerState.CullCounterClockwise);
             //_spriteBatch.Draw(_renderTarget, GraphicsDevice.PresentationParameters.Bounds, Color.White);
-            _spriteBatch.End();
-            _drawCallWatch.Stop();
-            Window.Title = $"{_drawCallWatch.Elapsed.TotalMilliseconds}";
-            _drawCallWatch.Reset();
+            //_spriteBatch.End();
+            */
         }
     }
 }

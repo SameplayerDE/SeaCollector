@@ -11,7 +11,11 @@ namespace SeaCollector.Rendering.Cameras
         public Matrix Projection;
 
         public float NearPlane = 0.1f;
-        public float FarPlane = 10000f;
+        public float FarPlane = 1000f;
+        
+        public Vector3 Facing = Vector3.Forward;
+        public Vector3 Forward = Vector3.Forward;
+        public Vector3 Up = Vector3.Up;
         
         protected GraphicsDevice GraphicsDevice;
  

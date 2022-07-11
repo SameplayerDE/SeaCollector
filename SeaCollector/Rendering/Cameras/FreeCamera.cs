@@ -10,10 +10,7 @@ namespace SeaCollector.Rendering.Cameras
         public Vector3 Position;
         public Vector3 Rotation;
         public Vector3 Translation = Vector3.Zero;
-        public Vector3 Facing = Vector3.Forward;
-        public Vector3 Forward = Vector3.Forward;
-        public Vector3 Up = Vector3.Up;
-        
+
         public Matrix RotationMXYZ { get { return Matrix.Multiply(Matrix.Multiply(Matrix.CreateRotationX(Rotation.X), Matrix.CreateRotationY(Rotation.Y)), Matrix.CreateRotationZ(Rotation.Z)); } }
         public Matrix RotationMXY { get { return Matrix.Multiply(Matrix.CreateRotationX(Rotation.X), Matrix.CreateRotationY(Rotation.Y)); } }
         public Matrix RotationMXZ { get { return Matrix.Multiply(Matrix.CreateRotationX(Rotation.X), Matrix.CreateRotationZ(Rotation.Z)); } }

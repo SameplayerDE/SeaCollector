@@ -1,3 +1,4 @@
+using System;
 using Microsoft.Xna.Framework;
 using Microsoft.Xna.Framework.Graphics;
 
@@ -8,7 +9,7 @@ namespace SeaCollector.Rendering.Cameras
 
         public Vector3 Position;
         public Vector3 Rotation;
-        
+
         public Matrix RotationMXYZ { get { return Matrix.Multiply(Matrix.Multiply(Matrix.CreateRotationX(Rotation.X), Matrix.CreateRotationY(Rotation.Y)), Matrix.CreateRotationZ(Rotation.Z)); } }
         public Matrix RotationMXY { get { return Matrix.Multiply(Matrix.CreateRotationX(Rotation.X), Matrix.CreateRotationY(Rotation.Y)); } }
         public Matrix RotationMXZ { get { return Matrix.Multiply(Matrix.CreateRotationX(Rotation.X), Matrix.CreateRotationZ(Rotation.Z)); } }
@@ -22,7 +23,18 @@ namespace SeaCollector.Rendering.Cameras
         {
             Position = new Vector3(0, 0, 0);
         }
+        
+        public void RotateX(float x)
+        {
+            Rotation.X += MathHelper.ToRadians(x);
+            Rotation.X = Math.Clamp(Rotation.X, MathHelper.ToRadians(-89.9f), MathHelper.ToRadians(89.9f));
+        }
 
+        public void RotateZ(float z)
+        {
+            Rotation.Z += MathHelper.ToRadians(z);
+        }
+        
         public void RotateY(float y)
         {
             Rotation.Y += MathHelper.ToRadians(y);
@@ -31,8 +43,11 @@ namespace SeaCollector.Rendering.Cameras
         
         public override void Update()
         {
-            var front = Vector3.Transform(Vector3.Forward, RotationMXY);
-            View = Matrix.CreateLookAt(Position, Position + front, Vector3.Up);
+            Facing = Vector3.Transform(Vector3.Forward, RotationMXY);
+            Forward = Vector3.Transform(Vector3.Forward, RotationMY);
+            Up = Vector3.Transform(Vector3.Up, RotationMXYZ);
+            
+            View = Matrix.CreateLookAt(Position, Position + Facing, Vector3.Up);
         }
     }
 }

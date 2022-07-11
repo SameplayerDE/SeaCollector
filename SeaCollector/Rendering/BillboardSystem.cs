@@ -29,19 +29,14 @@ namespace SeaCollector.Rendering
 
         public VertexPositionTexture[] Particles;
 
-        int[] indices;
-
-        // Billboard settings
-        int nBillboards;
+        private int[] _indices;
+        
         public Vector2 BillboardSize;
-
-        public Texture2D Texture;
-
-        // GraphicsDevice and Effect
-        public GraphicsDevice GraphicsDevice;
-
         public bool EnsureOcclusion = true;
-
+        
+        
+        public Texture2D Texture;
+        public GraphicsDevice GraphicsDevice;
         public Effect Effect;
 
 
@@ -59,14 +54,12 @@ namespace SeaCollector.Rendering
             GraphicsDevice = graphicsDevice;
             Texture = texture;
             Effect = content.Load<Effect>("Effects/BillboardShader");
-            
         }
 
         public void Initialize(GraphicsDevice device)
         {
             GenerateInstanceVertexDeclaration();
-            //GenerateGeometry(device);
-            generateParticles(Vector3.Zero);
+            GenerateGeometry();
             GenerateInstanceInformation(device);
 
             Bindings = new VertexBufferBinding[2];
@@ -90,7 +83,7 @@ namespace SeaCollector.Rendering
             var random = new Random();
             var list = new List<Vector4>();
 
-            for (var i = 0; i < 100_000; i++)
+            for (var i = 0; i < 1_000_000; i++)
                 list.Add(new Vector4(RandomUtil.NextFloat(random, -1000, 1000), 0, RandomUtil.NextFloat(random, -1000, 1000),
                     0));
 
@@ -107,32 +100,32 @@ namespace SeaCollector.Rendering
             InstanceBuffer.SetData(Instances);
         }
 
-        void generateParticles(Vector3 particlePositions)
+        private void GenerateGeometry()
         {
             // Create vertex and index arrays
             Particles = new VertexPositionTexture[4];
-            indices = new int[6];
-            int x = 0;
+            _indices = new int[6];
+            var x = 0;
             // For each billboard...
-            for (int i = 0; i < 4; i += 4)
+            for (var i = 0; i < 4; i += 4)
             {
-                var pos = particlePositions;
+                var position = Vector3.Zero;
                 // Add 4 vertices at the billboard's position
-                Particles[i + 0] = new VertexPositionTexture(pos,
+                Particles[i + 0] = new VertexPositionTexture(position,
                     new Vector2(0, 0));
-                Particles[i + 1] = new VertexPositionTexture(pos,
+                Particles[i + 1] = new VertexPositionTexture(position,
                     new Vector2(0, 1));
-                Particles[i + 2] = new VertexPositionTexture(pos,
+                Particles[i + 2] = new VertexPositionTexture(position,
                     new Vector2(1, 1));
-                Particles[i + 3] = new VertexPositionTexture(pos,
+                Particles[i + 3] = new VertexPositionTexture(position,
                     new Vector2(1, 0));
                 // Add 6 indices to form two triangles
-                indices[x++] = i + 0;
-                indices[x++] = i + 3;
-                indices[x++] = i + 2;
-                indices[x++] = i + 2;
-                indices[x++] = i + 1;
-                indices[x++] = i + 0;
+                _indices[x++] = i + 0;
+                _indices[x++] = i + 3;
+                _indices[x++] = i + 2;
+                _indices[x++] = i + 2;
+                _indices[x++] = i + 1;
+                _indices[x++] = i + 0;
             }
 
             // Create and set the vertex buffer
@@ -144,62 +137,64 @@ namespace SeaCollector.Rendering
             IndexBuffer = new IndexBuffer(GraphicsDevice,
                 IndexElementSize.ThirtyTwoBits,
                 6, BufferUsage.WriteOnly);
-            IndexBuffer.SetData<int>(indices);
+            IndexBuffer.SetData(_indices);
         }
 
-        void setEffectParameters(Matrix View, Matrix Projection, Vector3 Up,
-            Vector3 Right)
+        private void SetEffectParameters(Matrix view, Matrix projection, Vector3 up,
+            Vector3 right)
         {
             Effect.Parameters["ParticleTexture"].SetValue(Texture);
-            Effect.Parameters["View"].SetValue(View);
-            Effect.Parameters["Projection"].SetValue(Projection);
+            Effect.Parameters["View"].SetValue(view);
+            Effect.Parameters["Projection"].SetValue(projection);
             Effect.Parameters["Size"].SetValue(BillboardSize / 2f);
-            Effect.Parameters["Up"].SetValue(Mode == BillboardMode.Spherical ? Up : Vector3.Up);
-            Effect.Parameters["Side"].SetValue(Right);
+            Effect.Parameters["Up"].SetValue(Mode == BillboardMode.Spherical ? up : Vector3.Up);
+            Effect.Parameters["Side"].SetValue(right);
             Effect.CurrentTechnique.Passes[0].Apply();
         }
 
-        void drawOpaquePixels()
+        private void DrawOpaquePixels()
         {
             GraphicsDevice.DepthStencilState = DepthStencilState.Default;
             Effect.Parameters["AlphaTest"].SetValue(true);
             Effect.Parameters["AlphaTestGreater"].SetValue(true);
-            drawBillboards();
+            DrawBillboards();
         }
 
-        void drawTransparentPixels()
+        private void DrawTransparentPixels()
         {
             GraphicsDevice.DepthStencilState = DepthStencilState.DepthRead;
             Effect.Parameters["AlphaTest"].SetValue(true);
             Effect.Parameters["AlphaTestGreater"].SetValue(false);
-            drawBillboards();
+            DrawBillboards();
         }
 
-        void drawBillboards()
+        private void DrawBillboards()
         {
             Effect.CurrentTechnique.Passes[0].Apply();
+#pragma warning disable CS0618
             GraphicsDevice.DrawInstancedPrimitives(PrimitiveType.TriangleList, 0, 0, 4, 0, 2,
+#pragma warning restore CS0618
                 InstanceCount);
         }
 
-        public void Draw(Matrix View, Matrix Projection, Vector3 Up, Vector3
-            Right)
+        public void Draw(Matrix view, Matrix projection, Vector3 up, Vector3
+            right)
         {
             // Set the vertex and index buffer to the graphics card
             GraphicsDevice.SetVertexBuffers(Bindings);
             GraphicsDevice.Indices = IndexBuffer;
             GraphicsDevice.BlendState = BlendState.AlphaBlend;
-            setEffectParameters(View, Projection, Up, Right);
+            SetEffectParameters(view, projection, up, right);
             if (EnsureOcclusion)
             {
-                drawOpaquePixels();
-                drawTransparentPixels();
+                DrawOpaquePixels();
+                DrawTransparentPixels();
             }
             else
             {
                 GraphicsDevice.DepthStencilState = DepthStencilState.DepthRead;
                 Effect.Parameters["AlphaTest"].SetValue(false);
-                drawBillboards();
+                DrawBillboards();
             }
 
             // Reset render states
