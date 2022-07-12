@@ -1,3 +1,4 @@
+using System.Net.Mime;
 using HxInput;
 using HxTime;
 using Microsoft.Xna.Framework;
@@ -30,6 +31,11 @@ namespace SeaCollector.Worlds
             GameObject0.Position = Vector3.Zero;
             GameObject0.Mesh = GameMesh.LoadFromFile(GraphicsDevice, "Content/Models/Hulls/hull_0.obj");
             ((FreeCamera)Camera).Position = new Vector3(1, 1, 1);
+        }
+
+        public override void UnloadContent()
+        {
+           
         }
 
         public override void Update(GameTime gameTime)

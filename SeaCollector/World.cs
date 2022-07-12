@@ -25,6 +25,11 @@ namespace SeaCollector
             throw new NotImplementedException();
         }
 
+        public virtual void UnloadContent()
+        {
+            throw new NotImplementedException();
+        }
+
         public virtual void Update(GameTime gameTime)
         {
             throw new NotImplementedException();
