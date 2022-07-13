@@ -32,6 +32,13 @@ namespace SeaCollector.Rendering.Cameras
             Projection = Matrix.CreatePerspectiveFieldOfView(
                 MathHelper.ToRadians(FieldOfView), aspectRatio, NearPlane, FarPlane);
         }
+        
+        public void GeneratePerspectiveProjectionMatrix(int width, int height)
+        {
+            var aspectRatio = (float)width / height;
+            Projection = Matrix.CreatePerspectiveFieldOfView(
+                MathHelper.ToRadians(FieldOfView), aspectRatio, NearPlane, FarPlane);
+        }
         public virtual void Update()
         {
         }

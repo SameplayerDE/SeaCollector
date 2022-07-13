@@ -1,7 +1,11 @@
 ﻿using System;
 using System.Diagnostics;
+using System.Drawing.Drawing2D;
+using HxInput;
+using HxTime;
 using Microsoft.Xna.Framework;
 using Microsoft.Xna.Framework.Graphics;
+using Microsoft.Xna.Framework.Input;
 using SeaCollector.Worlds;
 
 namespace SeaCollector
@@ -16,7 +20,10 @@ namespace SeaCollector
 
         private RenderTarget2D _renderTarget;
         private Rectangle _renderTargetRectangle;
+        private Point _preferedScreenSize;
 
+        private Texture2D _background;
+        
         private Stopwatch _drawCallWatch;
 
         private World _world0;
@@ -34,63 +41,179 @@ namespace SeaCollector
 
             IsFixedTimeStep = true;
             TargetElapsedTime = TimeSpan.FromSeconds(1d / 60d);
+
+            _preferedScreenSize = new Point(256 * 2, 192 * 2);
+
         }
 
         protected override void Initialize()
         {
             _graphicsDeviceManager.PreferredBackBufferHeight = 720;
             _graphicsDeviceManager.PreferredBackBufferWidth = 1280;
-            _graphicsDeviceManager.IsFullScreen = false;
             _graphicsDeviceManager.PreferredBackBufferFormat = SurfaceFormat.Color;
             _graphicsDeviceManager.PreferredDepthStencilFormat = DepthFormat.Depth24; // <-- set depth here
+            _graphicsDeviceManager.HardwareModeSwitch = false;
+            _graphicsDeviceManager.PreferMultiSampling = false;
+            _graphicsDeviceManager.IsFullScreen = false;
             _graphicsDeviceManager.ApplyChanges();
 
             Window.AllowUserResizing = true;
             Window.ClientSizeChanged += OnResize;
-
-            _renderTarget = new RenderTarget2D(GraphicsDevice, 240, 160, false,
+            
+            _renderTarget = new RenderTarget2D(GraphicsDevice, _preferedScreenSize.X, _preferedScreenSize.Y, false,
                 GraphicsDevice.PresentationParameters.BackBufferFormat, DepthFormat.Depth24);
-            _renderTargetRectangle = new Rectangle(0, 0, 240, 160);
+            _renderTargetRectangle = new Rectangle(0, 0, _preferedScreenSize.X, _preferedScreenSize.Y);
 
             _drawCallWatch = new Stopwatch();
 
-            _world0 = new Stage0(GraphicsDevice);
-            _world1 = new Stage1(GraphicsDevice);
+            WorldManager.Instance.ContentManager = Content;
+            WorldManager.Instance.GraphicsDevice = GraphicsDevice;
 
+            WorldManager.Instance.Fill(this);
+            
+            PerformScreenFit();
+            
             base.Initialize();
         }
 
+        public void ToggleFullscreen()
+        {
+            _graphicsDeviceManager.IsFullScreen = !_graphicsDeviceManager.IsFullScreen;
+            _graphicsDeviceManager.ApplyChanges();
+        }
+
+        public void PerformScreenFit()
+        {
+            var outputAspect = Window.ClientBounds.Width / (float)Window.ClientBounds.Height;
+            var preferredAspect = _preferedScreenSize.X / (float)_preferedScreenSize.Y;
+            
+            Rectangle dst;
+            if (outputAspect <= preferredAspect)
+            {
+                // output is taller than it is wider, bars on top/bottom
+                int presentHeight = (int)((Window.ClientBounds.Width / preferredAspect) + 0.5f);
+                int barHeight = (Window.ClientBounds.Height - presentHeight) / 2;
+                dst = new Rectangle(0, barHeight, Window.ClientBounds.Width, presentHeight);
+            }
+            else
+            {
+                // output is wider than it is tall, bars left/right
+                int presentWidth = (int)((Window.ClientBounds.Height * preferredAspect) + 0.5f);
+                int barWidth = (Window.ClientBounds.Width - presentWidth) / 2;
+                dst = new Rectangle(barWidth, 0, presentWidth, Window.ClientBounds.Height);
+            }
+            
+            _renderTargetRectangle = dst;
+            _world0?.Camera?.GeneratePerspectiveProjectionMatrix(dst.Width, dst.Height);
+
+        }
+        
         private void OnResize(object sender, EventArgs e)
         {
             var rectangle = GraphicsDevice.PresentationParameters.Bounds;
             var width = rectangle.Width;
             var height = rectangle.Height;
-#if DEBUG
-            Console.WriteLine(rectangle.ToString());
-#endif
-            if (width >= height)
+            
+            var outputAspect = Window.ClientBounds.Width / (float)Window.ClientBounds.Height;
+            var preferredAspect = _preferedScreenSize.X / (float)_preferedScreenSize.Y;
+            
+            var factorWidth = width / (float)_preferedScreenSize.X;
+            var factorHeight = height / (float)_preferedScreenSize.Y;
+
+            Rectangle dst;
+            if (outputAspect <= preferredAspect)
             {
-                _renderTargetRectangle.Width = width;
-                _renderTargetRectangle.Height = 160 * (width / 240);
+                // output is taller than it is wider, bars on top/bottom
+                int presentHeight = (int)((Window.ClientBounds.Width / preferredAspect) + 0.5f);
+                int barHeight = (Window.ClientBounds.Height - presentHeight) / 2;
+                dst = new Rectangle(0, barHeight, Window.ClientBounds.Width, presentHeight);
             }
             else
             {
+                // output is wider than it is tall, bars left/right
+                int presentWidth = (int)((Window.ClientBounds.Height * preferredAspect) + 0.5f);
+                int barWidth = (Window.ClientBounds.Width - presentWidth) / 2;
+                dst = new Rectangle(barWidth, 0, presentWidth, Window.ClientBounds.Height);
+            }
+            
+            /*if (width >= height)
+            {
+                _renderTargetRectangle.Width = (int)(240 / factorWidth);
                 _renderTargetRectangle.Height = height;
             }
+            else
+            {
+                _renderTargetRectangle.Width = width;
+                _renderTargetRectangle.Height = 160;
+            }*/
+
+            //_renderTargetRectangle.X = (width - _renderTargetRectangle.Width) / 2;
+            //_renderTargetRectangle.Y = (height - _renderTargetRectangle.Height) / 2;
+
+            _renderTargetRectangle = dst;
+            //_world0?.Camera?.GeneratePerspectiveProjectionMatrix(dst.Width, dst.Height);
+            _world0?.Camera?.GeneratePerspectiveProjectionMatrix();
+            
+#if DEBUG
+            Console.WriteLine(rectangle.ToString());
+            Console.WriteLine(factorWidth);
+            Console.WriteLine(factorHeight);
+            Console.WriteLine(_renderTargetRectangle.ToString());
+#endif
         }
 
         protected override void LoadContent()
         {
             _spriteBatch = new SpriteBatch(GraphicsDevice);
 
-            _world0.LoadContent(Content);
-
+            _background = Content.Load<Texture2D>("Textures/waves");
+            
+            WorldManager.Instance.Stage("ship");
+            WorldManager.Instance.Grab();
+            
             base.LoadContent();
         }
 
         protected override void Update(GameTime gameTime)
         {
-            _world0.Update(gameTime);
+            Input.Instance.Update(gameTime);
+            Time.Instance.Update(gameTime);
+            
+            if (Input.Instance.IsKeyboardKeyDownOnce(Keys.Escape))
+            {
+                Exit();
+            }
+            
+            if (Input.Instance.IsKeyboardKeyDownOnce(Keys.D1))
+            {
+                WorldManager.Instance.Stage("ship");
+            }
+            
+            if (Input.Instance.IsKeyboardKeyDownOnce(Keys.D2))
+            {
+                WorldManager.Instance.Stage("forest1");
+            }
+            
+            if (Input.Instance.IsKeyboardKeyDownOnce(Keys.D3))
+            {
+                WorldManager.Instance.Stage("forest2");
+            }
+            if (Input.Instance.IsKeyboardKeyDownOnce(Keys.D4))
+            {
+                WorldManager.Instance.Stage("forest3");
+            }
+            
+            if (Input.Instance.IsKeyboardKeyDownOnce(Keys.Space))
+            {
+                WorldManager.Instance.Grab();
+            }
+            
+            if (Input.Instance.IsKeyboardKeyDownOnce(Keys.F3))
+            {
+                ToggleFullscreen();
+            }
+            
+            WorldManager.Instance.Current.Update(gameTime);
         }
 
         protected override void Draw(GameTime gameTime)
@@ -100,14 +223,20 @@ namespace SeaCollector
             GraphicsDevice.RasterizerState = rasterizerState;
             GraphicsDevice.DepthStencilState = DepthStencilState.Default;
 
-            GraphicsDevice.SetRenderTarget(_renderTarget);
+            //GraphicsDevice.SetRenderTarget(_renderTarget);
             GraphicsDevice.Clear(new Color(78, 202, 255));
-            _world0.Draw(gameTime);
-            GraphicsDevice.SetRenderTarget(null);
+            WorldManager.Instance.Current.Draw(gameTime);
+            //GraphicsDevice.SetRenderTarget(null);
 
+            //GraphicsDevice.Clear(new Color(78, 202, 255));
+            
+            _spriteBatch.Begin(samplerState: SamplerState.PointWrap);
+            //_spriteBatch.Draw(_background, Vector2.Zero, GraphicsDevice.Viewport.Bounds, Color.White);
+            _spriteBatch.End();
+            
             _spriteBatch.Begin(SpriteSortMode.Deferred, BlendState.AlphaBlend, SamplerState.PointClamp,
                 DepthStencilState.Default, RasterizerState.CullCounterClockwise);
-            _spriteBatch.Draw(_renderTarget, _renderTargetRectangle, Color.White);
+            //_spriteBatch.Draw(_renderTarget, _renderTargetRectangle, Color.White);
             _spriteBatch.End();
         }
     }

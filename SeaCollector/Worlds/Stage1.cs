@@ -1,3 +1,4 @@
+using System;
 using HxInput;
 using HxTime;
 using Microsoft.Xna.Framework;
@@ -14,17 +15,24 @@ namespace SeaCollector.Worlds
         
         public BillboardSystem TreeBillboardSystem;
         
-        public Stage1(GraphicsDevice graphicsDevice) : base(graphicsDevice)
+        public Stage1(Game game) : base(game)
         {
-            WorldMatrix = Matrix.Identity;
             Camera = new StationaryCamera(GraphicsDevice);
         }
 
         public override void LoadContent(ContentManager contentManager)
         {
-            TreeBillboardSystem = new BillboardSystem(GraphicsDevice, contentManager, contentManager.Load<Texture2D>("Textures/tree"), new Vector2(1));
+            TreeBillboardSystem = new BillboardSystem(GraphicsDevice, Content, Content.Load<Texture2D>("Textures/flowers"), new Vector2(1));
             TreeBillboardSystem.Initialize(GraphicsDevice);
             TreeBillboardSystem.Mode = BillboardMode.Cylindrical;
+        }
+
+        public override void UnloadContent()
+        {
+            Console.WriteLine("Unloaded??");
+            TreeBillboardSystem.Dispose();
+            Content.Unload();
+            GC.Collect();
         }
 
         public override void Update(GameTime gameTime)

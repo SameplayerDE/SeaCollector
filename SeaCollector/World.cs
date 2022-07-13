@@ -2,6 +2,7 @@ using System;
 using Microsoft.Xna.Framework;
 using Microsoft.Xna.Framework.Content;
 using Microsoft.Xna.Framework.Graphics;
+using SeaCollector.Rendering;
 using SeaCollector.Rendering.Cameras;
 
 namespace SeaCollector
@@ -10,13 +11,17 @@ namespace SeaCollector
     {
         public string Name = Guid.NewGuid().ToString();
 
-        public GraphicsDevice GraphicsDevice;
+        protected ContentManager Content;
+        
+        public Game Game;
         public Camera Camera;
         public Matrix WorldMatrix;
+        public GraphicsDevice GraphicsDevice => Game.GraphicsDevice;
 
-        public World(GraphicsDevice graphicsDevice)
+        public World(Game game)
         {
-            GraphicsDevice = graphicsDevice;
+            Content = new ContentManager(game.Services, "Content");
+            Game = game;
             WorldMatrix = Matrix.Identity;
         }
         

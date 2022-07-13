@@ -30,11 +30,11 @@ namespace SeaCollector.Rendering
         public VertexPositionTexture[] Particles;
 
         private int[] _indices;
-        
+
         public Vector2 BillboardSize;
         public bool EnsureOcclusion = true;
-        
-        
+
+
         public Texture2D Texture;
         public GraphicsDevice GraphicsDevice;
         public Effect Effect;
@@ -81,20 +81,17 @@ namespace SeaCollector.Rendering
         {
             // Generate random tree positions
             var random = new Random();
-            var list = new List<Vector4>();
 
-            for (var i = 0; i < 1_000_000; i++)
-                list.Add(new Vector4(RandomUtil.NextFloat(random, -1000, 1000), 0, RandomUtil.NextFloat(random, -1000, 1000),
-                    0));
-
-            InstanceCount = list.Count;
+            InstanceCount = 10_000_00;
             Instances = new InstanceInfo[InstanceCount];
-
+            
             for (var i = 0; i < InstanceCount; i++)
             {
-                Instances[i].World = list[i];
+                Instances[i].World = new Vector4(RandomUtil.NextFloat(random, -1000, 1000), 0,
+                    RandomUtil.NextFloat(random, -1000, 1000),
+                    0);
             }
-
+            
             InstanceBuffer = new VertexBuffer(device, InstanceVertexDeclaration,
                 InstanceCount, BufferUsage.WriteOnly);
             InstanceBuffer.SetData(Instances);
@@ -203,6 +200,16 @@ namespace SeaCollector.Rendering
             // Un-set the vertex and index buffer
             GraphicsDevice.SetVertexBuffer(null);
             GraphicsDevice.Indices = null;
+        }
+
+        public void Dispose()
+        {
+            if (Instances != null) Array.Clear(Instances, 0, Instances.Length);
+            if (Particles != null) Array.Clear(Particles, 0, Particles.Length);
+            if (Bindings != null) Array.Clear(Bindings, 0, Bindings.Length);
+            if (_indices != null) Array.Clear(_indices, 0, _indices.Length);
+            VertexBuffer.Dispose();
+            IndexBuffer.Dispose();
         }
     }
 }
