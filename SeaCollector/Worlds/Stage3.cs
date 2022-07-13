@@ -23,13 +23,14 @@ namespace SeaCollector.Worlds
         {
             base.Init();
             Camera = new StationaryCamera(GraphicsDevice);
+            TreeBillboardSystem = new BillboardSystem(GraphicsDevice, new Vector2(1));
+            TreeBillboardSystem.Initialize(GraphicsDevice);
+            TreeBillboardSystem.Mode = BillboardMode.Spherical;
         }
 
         public override void LoadContent(ContentManager contentManager)
         {
-            TreeBillboardSystem = new BillboardSystem(GraphicsDevice, Content, Content.Load<Texture2D>("Textures/waves"), new Vector2(1));
-            TreeBillboardSystem.Initialize(GraphicsDevice);
-            TreeBillboardSystem.Mode = BillboardMode.Spherical;
+            TreeBillboardSystem.LoadContent(Content, "Textures/waves");
         }
 
         public override void UnloadContent()

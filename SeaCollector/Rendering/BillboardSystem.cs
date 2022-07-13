@@ -47,13 +47,16 @@ namespace SeaCollector.Rendering
         public InstanceInfo[] Instances;
         public int InstanceCount;
 
-        public BillboardSystem(GraphicsDevice graphicsDevice, ContentManager content, Texture2D texture,
-            Vector2 billboardSize)
+        public BillboardSystem(GraphicsDevice graphicsDevice, Vector2 billboardSize)
         {
             BillboardSize = billboardSize;
             GraphicsDevice = graphicsDevice;
-            Texture = texture;
-            Effect = content.Load<Effect>("Effects/BillboardShader");
+        }
+
+        public void LoadContent(ContentManager contentManager, string texture)
+        {
+            Texture = contentManager.Load<Texture2D>(texture);
+            Effect = contentManager.Load<Effect>("Effects/BillboardShader");
         }
 
         public void Initialize(GraphicsDevice device)
@@ -82,7 +85,7 @@ namespace SeaCollector.Rendering
             // Generate random tree positions
             var random = new Random();
 
-            InstanceCount = 10_000_00;
+            InstanceCount = 100_000;
             Instances = new InstanceInfo[InstanceCount];
             
             for (var i = 0; i < InstanceCount; i++)

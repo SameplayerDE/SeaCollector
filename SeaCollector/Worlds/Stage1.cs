@@ -24,19 +24,20 @@ namespace SeaCollector.Worlds
         {
             base.Init();
             Camera = new StationaryCamera(GraphicsDevice);
+            TreeBillboardSystem = new BillboardSystem(GraphicsDevice, new Vector2(1));
+            TreeBillboardSystem.Initialize(GraphicsDevice);
+            TreeBillboardSystem.Mode = BillboardMode.Cylindrical;
         }
 
         public override void LoadContent(ContentManager contentManager)
         {
-            TreeBillboardSystem = new BillboardSystem(GraphicsDevice, Content, Content.Load<Texture2D>("Textures/flowers"), new Vector2(1));
-            TreeBillboardSystem.Initialize(GraphicsDevice);
-            TreeBillboardSystem.Mode = BillboardMode.Cylindrical;
+            TreeBillboardSystem.LoadContent(Content, "Textures/flowers");
         }
 
         public override void UnloadContent()
         {
             Console.WriteLine("Unloaded??");
-            TreeBillboardSystem.Dispose();
+            //TreeBillboardSystem.Dispose();
             Content.Unload();
         }
 
