@@ -20,9 +20,14 @@ namespace SeaCollector
 
         public World(Game game)
         {
-            Content = new ContentManager(game.Services, "Content");
             Game = game;
+            Init();
+        }
+        
+        protected virtual void Init()
+        {
             WorldMatrix = Matrix.Identity;
+            Content = new ContentManager(Game.Services, "Content");
         }
         
         public virtual void LoadContent(ContentManager contentManager)

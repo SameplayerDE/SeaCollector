@@ -20,17 +20,23 @@ namespace SeaCollector.Worlds
 
         public Stage0(Game game) : base(game)
         {
-            Camera = new FreeCamera(GraphicsDevice);
+            
         }
-        
+
+        protected override void Init()
+        {
+            base.Init();
+            Camera = new FreeCamera(GraphicsDevice);
+            ((FreeCamera)Camera).Position = new Vector3(1, 1, 1);
+            GameObject0 = new GameObject();
+            GameObject0.Position = Vector3.Zero;
+            GameObject0.Mesh = GameMesh.LoadFromFile(GraphicsDevice, "Content/Models/Hulls/hull_0.obj");
+        }
+
         public override void LoadContent(ContentManager contentManager)
         {
             Effect = Content.Load<Effect>("Effects/TextureCellShader");
             Texture = Content.Load<Texture2D>("Models/Hulls/sp_hul01");
-            GameObject0 = new GameObject();
-            GameObject0.Position = Vector3.Zero;
-            GameObject0.Mesh = GameMesh.LoadFromFile(GraphicsDevice, "Content/Models/Hulls/hull_0.obj");
-            ((FreeCamera)Camera).Position = new Vector3(1, 1, 1);
         }
 
         public override void UnloadContent()

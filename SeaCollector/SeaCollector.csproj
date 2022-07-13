@@ -108,9 +108,6 @@
         <None Update="Content\Models\Hulls\5\hull05.png">
           <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
         </None>
-        <None Update="Content\Models\Hulls\canon_0.obj">
-          <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
-        </None>
         <None Update="Content\Models\Hulls\hull_0.mtl">
           <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
         </None>

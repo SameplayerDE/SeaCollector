@@ -17,6 +17,12 @@ namespace SeaCollector.Worlds
         
         public Stage1(Game game) : base(game)
         {
+            
+        }
+
+        protected override void Init()
+        {
+            base.Init();
             Camera = new StationaryCamera(GraphicsDevice);
         }
 
@@ -32,7 +38,6 @@ namespace SeaCollector.Worlds
             Console.WriteLine("Unloaded??");
             TreeBillboardSystem.Dispose();
             Content.Unload();
-            GC.Collect();
         }
 
         public override void Update(GameTime gameTime)

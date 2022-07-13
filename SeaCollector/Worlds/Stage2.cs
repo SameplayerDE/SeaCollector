@@ -17,6 +17,11 @@ namespace SeaCollector.Worlds
         
         public Stage2(Game game) : base(game)
         {
+        }
+        
+        protected override void Init()
+        {
+            base.Init();
             Camera = new StationaryCamera(GraphicsDevice);
         }
 
