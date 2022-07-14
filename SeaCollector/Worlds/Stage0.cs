@@ -45,7 +45,7 @@ namespace SeaCollector.Worlds
         public override void LoadContent(ContentManager contentManager)
         {
             Effect = Content.Load<Effect>("Effects/TextureCellShader");
-            Texture = Content.Load<Texture2D>("Textures/main_red");
+            Texture = Content.Load<Texture2D>("Textures/Link/main_red");
         }
 
         public override void UnloadContent()
