@@ -1,5 +1,4 @@
 using System;
-using System.Net.Mime;
 using HxInput;
 using HxTime;
 using Microsoft.Xna.Framework;
@@ -18,6 +17,7 @@ namespace SeaCollector.Worlds
         public GameObject GameObject1;
         public Effect Effect;
         public Texture2D Texture;
+        public Model Model;
 
         public Stage0(Game game) : base(game)
         {
@@ -44,6 +44,7 @@ namespace SeaCollector.Worlds
 
         public override void LoadContent(ContentManager contentManager)
         {
+            Model = Content.Load<Model>("untitled");
             Effect = Content.Load<Effect>("Effects/TextureCellShader");
             Texture = Content.Load<Texture2D>("Textures/Link/main_red");
         }
@@ -57,9 +58,8 @@ namespace SeaCollector.Worlds
         {
             var direction = new Vector3();
             var mouseDelta = Input.Instance.LatestMouseDelta;
-            
-            
-            if (Input.Instance.IsKeyboardKeyDown(Keys.W))
+
+            if (HxInput.Input.Instance.IsKeyboardKeyDown(Keys.W))
             {
                 direction += Vector3.Forward;
             }
@@ -74,6 +74,12 @@ namespace SeaCollector.Worlds
             if (Keyboard.GetState().IsKeyDown(Keys.S))
             {
                 direction += Vector3.Backward;
+            }
+
+            if (GameObject0.Position.Y > 0)
+            {
+                GameObject0.Position.Y -= 9.81f * Time.Instance.DeltaSecondsF;
+                GameObject0.Position.Y = Math.Clamp(GameObject0.Position.Y, 0, 100);
             }
             
             if (direction.Length() != 0)
@@ -112,7 +118,18 @@ namespace SeaCollector.Worlds
             Effect.Parameters["Texture00"]?.SetValue(Texture);
             GameObject0.Draw(GraphicsDevice, Effect, WorldMatrix, Camera.View, Camera.Projection);
             GameObject1.Draw(GraphicsDevice, Effect, WorldMatrix, Camera.View, Camera.Projection);
-
+            
+            foreach (ModelMesh mesh in Model.Meshes)
+            {
+                foreach (BasicEffect effect in mesh.Effects)
+                {
+                    effect.World = WorldMatrix;
+                    effect.View = Camera.View;
+                    effect.Projection = Camera.Projection;
+                }
+ 
+                mesh.Draw();
+            }
             //_spriteBatch.Begin(SpriteSortMode.Deferred, BlendState.AlphaBlend, SamplerState.PointClamp, DepthStencilState.Default, RasterizerState.CullCounterClockwise);
             //_spriteBatch.Draw(_renderTarget, GraphicsDevice.PresentationParameters.Bounds, Color.White);
             //_spriteBatch.End();

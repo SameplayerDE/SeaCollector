@@ -13,7 +13,6 @@ namespace SeaCollector.Entities
 
         public Matrix Matrix = Matrix.Identity;
         
-        
         public GameMesh Mesh;
 
         public virtual void LoadContent(GraphicsDevice graphicsDevice, ContentManager contentManager)

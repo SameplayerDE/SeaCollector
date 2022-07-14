@@ -24,7 +24,7 @@ namespace SeaCollector.Rendering.Cameras
             var tScale = Vector3.One;
 
             Target.Matrix.Decompose(out tScale, out tRotation, out tPosition);
-            
+
             Position = Offset + tPosition + Target.Matrix.Backward * Distance;
             //Facing = Vector3.Transform(Vector3.Forward, RotationMXY);
             //Forward = Vector3.Transform(Vector3.Forward, RotationMY);
