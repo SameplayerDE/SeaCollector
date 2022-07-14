@@ -13,6 +13,7 @@ namespace SeaCollector.Entities
 
         public Matrix Matrix = Matrix.Identity;
         
+        
         public GameMesh Mesh;
 
         public virtual void LoadContent(GraphicsDevice graphicsDevice, ContentManager contentManager)
@@ -33,7 +34,7 @@ namespace SeaCollector.Entities
 
             var n_translation = Matrix.CreateTranslation(Position);
 
-            Matrix *= n_scale * n_rotation * n_translation;
+            Matrix = n_scale * n_rotation * n_translation;
         }
         
         public void Draw(GraphicsDevice graphicsDevice, Effect effect, Matrix world, Matrix view, Matrix projection)

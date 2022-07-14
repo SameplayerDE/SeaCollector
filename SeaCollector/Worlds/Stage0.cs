@@ -15,6 +15,7 @@ namespace SeaCollector.Worlds
     public class Stage0 : World
     {
         public GameObject GameObject0;
+        public GameObject GameObject1;
         public Effect Effect;
         public Texture2D Texture;
 
@@ -26,17 +27,25 @@ namespace SeaCollector.Worlds
         protected override void Init()
         {
             base.Init();
-            Camera = new FreeCamera(GraphicsDevice);
-            ((FreeCamera)Camera).Position = new Vector3(1, 1, 1);
+            Camera = new BallCamera(GraphicsDevice);
+            
             GameObject0 = new GameObject();
             GameObject0.Position = Vector3.Zero;
-            GameObject0.Mesh = GameMesh.LoadFromFile(GraphicsDevice, "Content/Models/Hulls/hull_0.obj");
+            GameObject0.Mesh = GameMesh.LoadFromFile(GraphicsDevice, "Content/Models/link.obj");
+            GameObject0.Scale /= 2;
+            
+            GameObject1 = new GameObject();
+            GameObject1.Position = Vector3.Zero;
+            GameObject1.Mesh = GameMesh.LoadFromFile(GraphicsDevice, "Content/Models/Hulls/hull_0.obj");
+            
+            ((BallCamera)Camera).Position = new Vector3(1, 1, 1);
+            ((BallCamera)Camera).Target = GameObject0;
         }
 
         public override void LoadContent(ContentManager contentManager)
         {
             Effect = Content.Load<Effect>("Effects/TextureCellShader");
-            Texture = Content.Load<Texture2D>("Models/Hulls/sp_hul01");
+            Texture = Content.Load<Texture2D>("Textures/main_red");
         }
 
         public override void UnloadContent()
@@ -47,6 +56,72 @@ namespace SeaCollector.Worlds
         public override void Update(GameTime gameTime)
         {
             var direction = new Vector3();
+            var mouseDelta = Input.Instance.LatestMouseDelta;
+            
+            
+            if (Input.Instance.IsKeyboardKeyDown(Keys.W))
+            {
+                direction += Vector3.Forward;
+            }
+            if (Input.Instance.IsKeyboardKeyDown(Keys.A))
+            {
+                direction += Vector3.Left;
+            }
+            if (Keyboard.GetState().IsKeyDown(Keys.D))
+            {
+                direction += Vector3.Right;
+            }
+            if (Keyboard.GetState().IsKeyDown(Keys.S))
+            {
+                direction += Vector3.Backward;
+            }
+            
+            if (direction.Length() != 0)
+            {
+                direction.Normalize();
+                direction *= 2f;
+                direction *= Time.Instance.DeltaSecondsF;
+                
+                var tRotation = Quaternion.Identity;
+                var tPosition = Vector3.Zero;
+                var tScale = Vector3.One;
+
+                GameObject0.Matrix.Decompose(out tScale, out tRotation, out tPosition);
+                
+                GameObject0.Position += Vector3.Transform(direction, tRotation);
+            }
+
+            GameObject0.Rotation.Y += mouseDelta.X * Time.Instance.DeltaSecondsF;
+
+            GameObject0.Update(gameTime);
+            GameObject1.Update(gameTime);
+            Camera.Update();
+            
+            Console.WriteLine(GameObject0.Position.ToString());
+        }
+
+        public override void Draw(GameTime gameTime)
+        {
+            var rasterizerState = new RasterizerState();
+            rasterizerState.CullMode = CullMode.None;
+            GraphicsDevice.RasterizerState = rasterizerState;
+            GraphicsDevice.DepthStencilState = DepthStencilState.Default;
+            
+
+            GraphicsDevice.Clear(new Color(78, 202, 255));
+            Effect.Parameters["Texture00"]?.SetValue(Texture);
+            GameObject0.Draw(GraphicsDevice, Effect, WorldMatrix, Camera.View, Camera.Projection);
+            GameObject1.Draw(GraphicsDevice, Effect, WorldMatrix, Camera.View, Camera.Projection);
+
+            //_spriteBatch.Begin(SpriteSortMode.Deferred, BlendState.AlphaBlend, SamplerState.PointClamp, DepthStencilState.Default, RasterizerState.CullCounterClockwise);
+            //_spriteBatch.Draw(_renderTarget, GraphicsDevice.PresentationParameters.Bounds, Color.White);
+            //_spriteBatch.End();
+        }
+    }
+}
+
+/*
+var direction = new Vector3();
             
             if (Input.Instance.IsKeyboardKeyDown(Keys.W))
             {
@@ -92,31 +167,11 @@ namespace SeaCollector.Worlds
                 ((FreeCamera)Camera).RotateY(-45 * Time.Instance.DeltaSecondsF);
             }
 
-            if (direction.Length() != 0)
-            {
-                direction.Normalize();
-                direction *= 2f;
-                direction *= Time.Instance.DeltaSecondsF;
-                ((FreeCamera)Camera).Move(direction);
-            }
-            Camera.Update();
-        }
-
-        public override void Draw(GameTime gameTime)
-        {
-            var rasterizerState = new RasterizerState();
-            rasterizerState.CullMode = CullMode.None;
-            GraphicsDevice.RasterizerState = rasterizerState;
-            GraphicsDevice.DepthStencilState = DepthStencilState.Default;
-            
-
-            GraphicsDevice.Clear(new Color(78, 202, 255));
-            Effect.Parameters["Texture00"]?.SetValue(Texture);
-            GameObject0.Draw(GraphicsDevice, Effect, WorldMatrix, Camera.View, Camera.Projection);
-
-            //_spriteBatch.Begin(SpriteSortMode.Deferred, BlendState.AlphaBlend, SamplerState.PointClamp, DepthStencilState.Default, RasterizerState.CullCounterClockwise);
-            //_spriteBatch.Draw(_renderTarget, GraphicsDevice.PresentationParameters.Bounds, Color.White);
-            //_spriteBatch.End();
-        }
-    }
+if (direction.Length() != 0)
+{
+    direction.Normalize();
+    direction *= 2f;
+    direction *= Time.Instance.DeltaSecondsF;
+    ((FreeCamera)Camera).Move(direction);
 }
+Camera.Update();*/
