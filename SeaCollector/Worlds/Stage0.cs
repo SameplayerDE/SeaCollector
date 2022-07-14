@@ -57,13 +57,13 @@ namespace SeaCollector.Worlds
         public override void Update(GameTime gameTime)
         {
             var direction = new Vector3();
-            var mouseDelta = Input.Instance.LatestMouseDelta;
+            var mouseDelta = HxInput.Input.Instance.LatestMouseDelta;
 
             if (HxInput.Input.Instance.IsKeyboardKeyDown(Keys.W))
             {
                 direction += Vector3.Forward;
             }
-            if (Input.Instance.IsKeyboardKeyDown(Keys.A))
+            if (HxInput.Input.Instance.IsKeyboardKeyDown(Keys.A))
             {
                 direction += Vector3.Left;
             }

@@ -176,39 +176,39 @@ namespace SeaCollector
 
         protected override void Update(GameTime gameTime)
         {
-            Input.Instance.Update(gameTime);
+            HxInput.Input.Instance.Update(gameTime);
             Time.Instance.Update(gameTime);
             
-            if (Input.Instance.IsKeyboardKeyDownOnce(Keys.Escape))
+            if (HxInput.Input.Instance.IsKeyboardKeyDownOnce(Keys.Escape))
             {
                 Exit();
             }
             
-            if (Input.Instance.IsKeyboardKeyDownOnce(Keys.D1))
+            if (HxInput.Input.Instance.IsKeyboardKeyDownOnce(Keys.D1))
             {
                 WorldManager.Instance.Stage("ship");
             }
             
-            if (Input.Instance.IsKeyboardKeyDownOnce(Keys.D2))
+            if (HxInput.Input.Instance.IsKeyboardKeyDownOnce(Keys.D2))
             {
                 WorldManager.Instance.Stage("forest1");
             }
             
-            if (Input.Instance.IsKeyboardKeyDownOnce(Keys.D3))
+            if (HxInput.Input.Instance.IsKeyboardKeyDownOnce(Keys.D3))
             {
                 WorldManager.Instance.Stage("forest2");
             }
-            if (Input.Instance.IsKeyboardKeyDownOnce(Keys.D4))
+            if (HxInput.Input.Instance.IsKeyboardKeyDownOnce(Keys.D4))
             {
                 WorldManager.Instance.Stage("forest3");
             }
             
-            if (Input.Instance.IsKeyboardKeyDownOnce(Keys.Space))
+            if (HxInput.Input.Instance.IsKeyboardKeyDownOnce(Keys.Space))
             {
                 WorldManager.Instance.Grab();
             }
             
-            if (Input.Instance.IsKeyboardKeyDownOnce(Keys.F3))
+            if (HxInput.Input.Instance.IsKeyboardKeyDownOnce(Keys.F3))
             {
                 ToggleFullscreen();
             }
