@@ -13,7 +13,8 @@ namespace SeaCollector.Worlds
 {
     public class Stage0 : World
     {
-        public GameObject GameObject0;
+        public Hero GameObject0;
+        public BaseCamera Cam;
         public GameObject GameObject1;
         public Effect Effect;
         public Texture2D Texture;
@@ -28,11 +29,14 @@ namespace SeaCollector.Worlds
         {
             base.Init();
             Camera = new BallCamera(GraphicsDevice);
+
+            GameObject0 = new Hero();
+            GameObject0.Initialize();
             
-            GameObject0 = new GameObject();
-            GameObject0.Position = Vector3.Zero;
-            GameObject0.Mesh = GameMesh.LoadFromFile(GraphicsDevice, "Content/Models/link.obj");
-            GameObject0.Scale /= 2;
+            Cam = new FixedPerspectiveCamera(GraphicsDevice);
+            Cam.Translate(new Vector3(0, 2, 2));
+            
+            GameObject0.AddChild(Cam);
             
             GameObject1 = new GameObject();
             GameObject1.Position = Vector3.Zero;
@@ -44,6 +48,7 @@ namespace SeaCollector.Worlds
 
         public override void LoadContent(ContentManager contentManager)
         {
+            GameObject0.LoadContent(GraphicsDevice, Content);
             Model = Content.Load<Model>("untitled");
             Effect = Content.Load<Effect>("Effects/TextureCellShader");
             Texture = Content.Load<Texture2D>("Textures/Link/main_red");
@@ -56,54 +61,12 @@ namespace SeaCollector.Worlds
 
         public override void Update(GameTime gameTime)
         {
-            var direction = new Vector3();
-            var mouseDelta = HxInput.Input.Instance.LatestMouseDelta;
-
-            if (HxInput.Input.Instance.IsKeyboardKeyDown(Keys.W))
-            {
-                direction += Vector3.Forward;
-            }
-            if (HxInput.Input.Instance.IsKeyboardKeyDown(Keys.A))
-            {
-                direction += Vector3.Left;
-            }
-            if (Keyboard.GetState().IsKeyDown(Keys.D))
-            {
-                direction += Vector3.Right;
-            }
-            if (Keyboard.GetState().IsKeyDown(Keys.S))
-            {
-                direction += Vector3.Backward;
-            }
-
-            if (GameObject0.Position.Y > 0)
-            {
-                GameObject0.Position.Y -= 9.81f * Time.Instance.DeltaSecondsF;
-                GameObject0.Position.Y = Math.Clamp(GameObject0.Position.Y, 0, 100);
-            }
-            
-            if (direction.Length() != 0)
-            {
-                direction.Normalize();
-                direction *= 2f;
-                direction *= Time.Instance.DeltaSecondsF;
-                
-                var tRotation = Quaternion.Identity;
-                var tPosition = Vector3.Zero;
-                var tScale = Vector3.One;
-
-                GameObject0.Matrix.Decompose(out tScale, out tRotation, out tPosition);
-                
-                GameObject0.Position += Vector3.Transform(direction, tRotation);
-            }
-
-            GameObject0.Rotation.Y += mouseDelta.X * Time.Instance.DeltaSecondsF;
-
+            Cam.Update(gameTime);
             GameObject0.Update(gameTime);
             GameObject1.Update(gameTime);
             Camera.Update();
             
-            Console.WriteLine(GameObject0.Position.ToString());
+            Console.WriteLine(GameObject0.LocalPosition.ToString());
         }
 
         public override void Draw(GameTime gameTime)
@@ -116,16 +79,16 @@ namespace SeaCollector.Worlds
 
             GraphicsDevice.Clear(new Color(78, 202, 255));
             Effect.Parameters["Texture00"]?.SetValue(Texture);
-            GameObject0.Draw(GraphicsDevice, Effect, WorldMatrix, Camera.View, Camera.Projection);
-            GameObject1.Draw(GraphicsDevice, Effect, WorldMatrix, Camera.View, Camera.Projection);
+            GameObject0.Draw(GraphicsDevice, Effect, WorldMatrix, Cam.View, Cam.Projection);
+            GameObject1.Mesh.Draw(GraphicsDevice, Effect, WorldMatrix, Cam.View, Cam.Projection);
             
             foreach (ModelMesh mesh in Model.Meshes)
             {
                 foreach (BasicEffect effect in mesh.Effects)
                 {
                     effect.World = WorldMatrix;
-                    effect.View = Camera.View;
-                    effect.Projection = Camera.Projection;
+                    effect.View = Cam.View;
+                    effect.Projection = Cam.Projection;
                 }
  
                 mesh.Draw();

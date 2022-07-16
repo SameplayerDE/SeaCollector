@@ -517,6 +517,22 @@ namespace SeaCollector.Rendering
             effect.Parameters["World"]?.SetValue(world);
             effect.Parameters["View"]?.SetValue(l_view);
             effect.Parameters["Projection"]?.SetValue(l_projection);
+
+            for (var index1 = 0; index1 < MeshParts.Count; ++index1)
+            {
+                var meshPart = MeshParts[index1];
+                //Effect effect = meshPart.Effect;
+                if (meshPart.PrimitiveCount > 0)
+                {
+                    graphicsDevice.SetVertexBuffer(meshPart.VertexBuffer);
+                    graphicsDevice.Indices = meshPart.IndexBuffer;
+                    for (var index2 = 0; index2 < effect.CurrentTechnique.Passes.Count; ++index2)
+                    {
+                        effect.CurrentTechnique.Passes[index2].Apply();
+                        graphicsDevice.DrawIndexedPrimitives(PrimitiveType.TriangleList, meshPart.VertexOffset, meshPart.StartIndex, meshPart.PrimitiveCount);
+                    }
+                }
+            }
             
             foreach (var currentTechniquePass in effect.CurrentTechnique.Passes)
             {

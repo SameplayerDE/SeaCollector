@@ -5,6 +5,7 @@ namespace SeaCollector.Rendering
 {
     public class GameMeshPart
     {
+        public int PrimitiveCount;
         public int StartIndex;
         public int VertexOffset;
         public VertexBuffer VertexBuffer; //VertexBuffer

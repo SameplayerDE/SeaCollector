@@ -8,7 +8,7 @@ namespace SeaCollector.Rendering.Cameras
     public class BallCamera : Camera
     {
 
-        public GameObject Target;
+        public GameObject3D Target;
         public float Distance = 5f;
         public Vector3 Position = Vector3.Zero;
         public Vector3 Offset = new Vector3(0, 2.5f, 0);
@@ -23,13 +23,13 @@ namespace SeaCollector.Rendering.Cameras
             var tPosition = Vector3.Zero;
             var tScale = Vector3.One;
 
-            Target.Matrix.Decompose(out tScale, out tRotation, out tPosition);
+            Target.WorldMatrix.Decompose(out tScale, out tRotation, out tPosition);
 
-            Position = Offset + tPosition + Target.Matrix.Backward * Distance;
+            Position = Offset + tPosition + Target.WorldMatrix.Backward * Distance;
             //Facing = Vector3.Transform(Vector3.Forward, RotationMXY);
             //Forward = Vector3.Transform(Vector3.Forward, RotationMY);
             //Up = Vector3.Transform(Vector3.Up, RotationMXYZ);
-            View = Matrix.CreateLookAt(Position, Target.Matrix.Translation, Vector3.Up);
+            View = Matrix.CreateLookAt(Position, Target.WorldMatrix.Translation, Vector3.Up);
         }
     }
 }

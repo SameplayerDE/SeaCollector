@@ -22,8 +22,6 @@ namespace SeaCollector.Entities
 
         public virtual void Update(GameTime gameTime)
         {
-            var l_world = Matrix;
-
             var n_scale = Matrix.CreateScale(Scale);
 
             var n_rotation =

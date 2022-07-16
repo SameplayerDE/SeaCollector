@@ -125,4 +125,8 @@
         </None>
     </ItemGroup>
 
+    <ItemGroup>
+      <Folder Include="Framework" />
+    </ItemGroup>
+
 </Project>
