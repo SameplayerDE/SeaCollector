@@ -2,6 +2,7 @@ using System;
 using Microsoft.Xna.Framework;
 using Microsoft.Xna.Framework.Graphics;
 using SeaCollector.Entities;
+using SeaCollector.Framework;
 
 namespace SeaCollector.Rendering.Cameras
 {

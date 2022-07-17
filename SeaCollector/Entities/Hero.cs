@@ -1,6 +1,9 @@
+using Accessibility;
 using HxTime;
 using Microsoft.Xna.Framework;
+using Microsoft.Xna.Framework.Graphics;
 using Microsoft.Xna.Framework.Input;
+using SeaCollector.Framework;
 
 namespace SeaCollector.Entities
 {
@@ -12,7 +15,7 @@ namespace SeaCollector.Entities
 
         public override void Initialize()
         {
-            GameMeshObject = new GameMeshObject("Content/Models/link.obj");
+            GameMeshObject = new GameMeshObject("Textures/Link/main_red", "Effects/TextureCellShader","Content/Models/link.obj");
             GameMeshObject.Scale(0.8f, 0.8f, 0.8f);
             AddChild(GameMeshObject);
             base.Initialize();

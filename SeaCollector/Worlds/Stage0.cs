@@ -79,7 +79,7 @@ namespace SeaCollector.Worlds
 
             GraphicsDevice.Clear(new Color(78, 202, 255));
             Effect.Parameters["Texture00"]?.SetValue(Texture);
-            GameObject0.Draw(GraphicsDevice, Effect, WorldMatrix, Cam.View, Cam.Projection);
+            //GameObject0.Draw(GraphicsDevice, Effect, WorldMatrix, Cam.View, Cam.Projection);
             GameObject1.Mesh.Draw(GraphicsDevice, Effect, WorldMatrix, Cam.View, Cam.Projection);
             
             foreach (ModelMesh mesh in Model.Meshes)

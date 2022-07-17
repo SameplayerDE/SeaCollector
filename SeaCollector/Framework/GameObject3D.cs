@@ -4,7 +4,7 @@ using Microsoft.Xna.Framework;
 using Microsoft.Xna.Framework.Content;
 using Microsoft.Xna.Framework.Graphics;
 
-namespace SeaCollector.Entities
+namespace SeaCollector.Framework
 {
     public abstract class GameObject3D
     {
@@ -74,15 +74,24 @@ namespace SeaCollector.Entities
             LocalRotation = Quaternion.CreateFromRotationMatrix(nRotation);
         }
         
+        public void Rotate(float x, float y, float z)
+        {
+            var nRotation =
+                Matrix.CreateRotationX(x) *
+                Matrix.CreateRotationY(y) *
+                Matrix.CreateRotationZ(z);
+            LocalRotation = Quaternion.CreateFromRotationMatrix(nRotation);
+        }
+        
         public void Rotate(Quaternion rotation)
         {
             LocalRotation = rotation;
         }
 
-        public void Rotate(float pitch, float yaw, float roll)
+        /*public void Rotate(float pitch, float yaw, float roll)
         {
             LocalRotation = Quaternion.CreateFromYawPitchRoll(MathHelper.ToRadians(yaw), MathHelper.ToRadians(pitch), MathHelper.ToRadians(roll));
-        }
+        }*/
 
         public virtual void Initialize()
         {
@@ -92,6 +101,11 @@ namespace SeaCollector.Entities
         public virtual void LoadContent(GraphicsDevice graphicsDevice, ContentManager contentManager)
         {
             Children.ForEach(child => child.LoadContent(graphicsDevice, contentManager));
+        }
+        
+        public virtual void UnloadContent()
+        {
+            Children.ForEach(child => child.UnloadContent());
         }
 
         public virtual void Update(GameTime gameTime)
@@ -121,9 +135,9 @@ namespace SeaCollector.Entities
             Children.ForEach(child => child.Update(gameTime));
         }
 
-        public virtual void Draw(GraphicsDevice graphicsDevice, Effect effect, Matrix world, Matrix view, Matrix projection)
+        public virtual void Draw(RenderContext renderContext)
         {
-            Children.ForEach(child => child.Draw(graphicsDevice, effect, world, view, projection));
+            Children.ForEach(child => child.Draw(renderContext));
         }
     }
 }

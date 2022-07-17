@@ -1,15 +1,16 @@
 using System;
-using System.Collections.Generic;
 using Microsoft.Xna.Framework.Content;
 using Microsoft.Xna.Framework.Graphics;
+using SeaCollector.Framework;
 using SharpDX;
 using Matrix = Microsoft.Xna.Framework.Matrix;
 using Vector2 = Microsoft.Xna.Framework.Vector2;
 using Vector3 = Microsoft.Xna.Framework.Vector3;
 using Vector4 = Microsoft.Xna.Framework.Vector4;
 
-namespace SeaCollector.Rendering
+namespace SeaCollector.Entities
 {
+    
     public enum BillboardMode
     {
         Cylindrical,
@@ -20,8 +21,8 @@ namespace SeaCollector.Rendering
     {
         public Vector4 World;
     };
-
-    public class BillboardSystem
+    
+    public class BillboardSystem : GameObject3D
     {
         public BillboardMode Mode = BillboardMode.Spherical;
         public VertexBuffer VertexBuffer; //VertexBuffer
@@ -34,12 +35,10 @@ namespace SeaCollector.Rendering
         public Vector2 BillboardSize;
         public bool EnsureOcclusion = true;
 
-
         public Texture2D Texture;
         public GraphicsDevice GraphicsDevice;
         public Effect Effect;
-
-
+        
         //Instancing
         public VertexDeclaration InstanceVertexDeclaration;
         public VertexBuffer InstanceBuffer;
@@ -49,28 +48,31 @@ namespace SeaCollector.Rendering
         
         public string TextureFile;
         public string EffectFile = "Effects/BillboardShader";
-
-        public BillboardSystem(GraphicsDevice graphicsDevice, Vector2 billboardSize)
+        
+        public BillboardSystem(GraphicsDevice graphicsDevice, Vector2 billboardSize, string texture)
         {
             BillboardSize = billboardSize;
             GraphicsDevice = graphicsDevice;
+            TextureFile = texture;
         }
 
-        public void LoadContent(ContentManager contentManager, string texture)
+        public override void LoadContent(GraphicsDevice graphicsDevice, ContentManager contentManager)
         {
-            Texture = contentManager.Load<Texture2D>(texture);
+            Texture = contentManager.Load<Texture2D>(TextureFile);
             Effect = contentManager.Load<Effect>(EffectFile);
+            base.LoadContent(graphicsDevice, contentManager);
         }
 
-        public void Initialize(GraphicsDevice device)
+        public override void Initialize()
         {
             GenerateInstanceVertexDeclaration();
             GenerateGeometry();
-            GenerateInstanceInformation(device);
+            GenerateInstanceInformation(GraphicsDevice);
 
             Bindings = new VertexBufferBinding[2];
             Bindings[0] = new VertexBufferBinding(VertexBuffer);
             Bindings[1] = new VertexBufferBinding(InstanceBuffer, 0, 1);
+            base.Initialize();
         }
 
         private void GenerateInstanceVertexDeclaration()
@@ -155,57 +157,57 @@ namespace SeaCollector.Rendering
             Effect.CurrentTechnique.Passes[0].Apply();
         }
 
-        private void DrawOpaquePixels()
+        private void DrawOpaquePixels(RenderContext renderContext)
         {
-            GraphicsDevice.DepthStencilState = DepthStencilState.Default;
+            renderContext.GraphicsDevice.DepthStencilState = DepthStencilState.Default;
             Effect.Parameters["AlphaTest"].SetValue(true);
             Effect.Parameters["AlphaTestGreater"].SetValue(true);
-            DrawBillboards();
+            DrawBillboards(renderContext);
         }
 
-        private void DrawTransparentPixels()
+        private void DrawTransparentPixels(RenderContext renderContext)
         {
-            GraphicsDevice.DepthStencilState = DepthStencilState.DepthRead;
+            renderContext.GraphicsDevice.DepthStencilState = DepthStencilState.DepthRead;
             Effect.Parameters["AlphaTest"].SetValue(true);
             Effect.Parameters["AlphaTestGreater"].SetValue(false);
-            DrawBillboards();
+            DrawBillboards(renderContext);
         }
 
-        private void DrawBillboards()
+        private void DrawBillboards(RenderContext renderContext)
         {
             Effect.CurrentTechnique.Passes[0].Apply();
 #pragma warning disable CS0618
-            GraphicsDevice.DrawInstancedPrimitives(PrimitiveType.TriangleList, 0, 0, 4, 0, 2,
+            renderContext.GraphicsDevice.DrawInstancedPrimitives(PrimitiveType.TriangleList, 0, 0, 4, 0, 2,
 #pragma warning restore CS0618
                 InstanceCount);
         }
 
-        public void Draw(Matrix view, Matrix projection, Vector3 up, Vector3
-            right)
+        public override void Draw(RenderContext renderContext)
         {
             // Set the vertex and index buffer to the graphics card
-            GraphicsDevice.SetVertexBuffers(Bindings);
-            GraphicsDevice.Indices = IndexBuffer;
-            GraphicsDevice.BlendState = BlendState.AlphaBlend;
-            SetEffectParameters(view, projection, up, right);
+            renderContext.GraphicsDevice.SetVertexBuffers(Bindings);
+            renderContext.GraphicsDevice.Indices = IndexBuffer;
+            renderContext.GraphicsDevice.BlendState = BlendState.AlphaBlend;
+            SetEffectParameters(renderContext.Camera.View, renderContext.Camera.Projection, renderContext.Camera.Up, Vector3.Cross(renderContext.Camera.Forward, Vector3.Up));
             if (EnsureOcclusion)
             {
-                DrawOpaquePixels();
-                DrawTransparentPixels();
+                DrawOpaquePixels(renderContext);
+                DrawTransparentPixels(renderContext);
             }
             else
             {
-                GraphicsDevice.DepthStencilState = DepthStencilState.DepthRead;
+                renderContext.GraphicsDevice.DepthStencilState = DepthStencilState.DepthRead;
                 Effect.Parameters["AlphaTest"].SetValue(false);
-                DrawBillboards();
+                DrawBillboards(renderContext);
             }
 
             // Reset render states
-            GraphicsDevice.BlendState = BlendState.Opaque;
-            GraphicsDevice.DepthStencilState = DepthStencilState.Default;
+            renderContext.GraphicsDevice.BlendState = BlendState.Opaque;
+            renderContext.GraphicsDevice.DepthStencilState = DepthStencilState.Default;
             // Un-set the vertex and index buffer
-            GraphicsDevice.SetVertexBuffer(null);
-            GraphicsDevice.Indices = null;
+            renderContext.GraphicsDevice.SetVertexBuffer(null);
+            renderContext.GraphicsDevice.Indices = null;
+            base.Draw(renderContext);
         }
 
         public void Dispose()

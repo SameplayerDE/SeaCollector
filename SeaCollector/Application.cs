@@ -6,7 +6,10 @@ using HxTime;
 using Microsoft.Xna.Framework;
 using Microsoft.Xna.Framework.Graphics;
 using Microsoft.Xna.Framework.Input;
+using SeaCollector.Framework;
+using SeaCollector.Scenes;
 using SeaCollector.Worlds;
+using Matrix = Microsoft.Xna.Framework.Matrix;
 
 namespace SeaCollector
 {
@@ -23,7 +26,7 @@ namespace SeaCollector
         private Point _preferedScreenSize;
 
         private Texture2D _background;
-        
+
         private Stopwatch _drawCallWatch;
 
         private World _world0;
@@ -43,7 +46,6 @@ namespace SeaCollector
             TargetElapsedTime = TimeSpan.FromSeconds(1d / 60d);
 
             _preferedScreenSize = new Point(256 * 2, 192 * 2);
-
         }
 
         protected override void Initialize()
@@ -59,20 +61,23 @@ namespace SeaCollector
 
             Window.AllowUserResizing = true;
             Window.ClientSizeChanged += OnResize;
-            
+
             _renderTarget = new RenderTarget2D(GraphicsDevice, _preferedScreenSize.X, _preferedScreenSize.Y, false,
                 GraphicsDevice.PresentationParameters.BackBufferFormat, DepthFormat.Depth24);
             _renderTargetRectangle = new Rectangle(0, 0, _preferedScreenSize.X, _preferedScreenSize.Y);
 
             _drawCallWatch = new Stopwatch();
 
-            WorldManager.Instance.ContentManager = Content;
-            WorldManager.Instance.GraphicsDevice = GraphicsDevice;
+            //WorldManager.Instance.ContentManager = Content;
+            //WorldManager.Instance.GraphicsDevice = GraphicsDevice;
 
-            WorldManager.Instance.Fill(this);
-            
+            //WorldManager.Instance.Fill(this);
+            GameSceneManager.Instance.RenderContext.GraphicsDevice = GraphicsDevice;
+            GameSceneManager.Instance.Add(new MainMenu(this));
+            GameSceneManager.Instance.Initialize();
+
             PerformScreenFit();
-            
+
             base.Initialize();
         }
 
@@ -86,7 +91,7 @@ namespace SeaCollector
         {
             var outputAspect = Window.ClientBounds.Width / (float)Window.ClientBounds.Height;
             var preferredAspect = _preferedScreenSize.X / (float)_preferedScreenSize.Y;
-            
+
             Rectangle dst;
             if (outputAspect <= preferredAspect)
             {
@@ -102,21 +107,20 @@ namespace SeaCollector
                 int barWidth = (Window.ClientBounds.Width - presentWidth) / 2;
                 dst = new Rectangle(barWidth, 0, presentWidth, Window.ClientBounds.Height);
             }
-            
+
             _renderTargetRectangle = dst;
             _world0?.Camera?.GeneratePerspectiveProjectionMatrix(dst.Width, dst.Height);
-
         }
-        
+
         private void OnResize(object sender, EventArgs e)
         {
             var rectangle = GraphicsDevice.PresentationParameters.Bounds;
             var width = rectangle.Width;
             var height = rectangle.Height;
-            
+
             var outputAspect = Window.ClientBounds.Width / (float)Window.ClientBounds.Height;
             var preferredAspect = _preferedScreenSize.X / (float)_preferedScreenSize.Y;
-            
+
             var factorWidth = width / (float)_preferedScreenSize.X;
             var factorHeight = height / (float)_preferedScreenSize.Y;
 
@@ -135,7 +139,7 @@ namespace SeaCollector
                 int barWidth = (Window.ClientBounds.Width - presentWidth) / 2;
                 dst = new Rectangle(barWidth, 0, presentWidth, Window.ClientBounds.Height);
             }
-            
+
             /*if (width >= height)
             {
                 _renderTargetRectangle.Width = (int)(240 / factorWidth);
@@ -153,7 +157,7 @@ namespace SeaCollector
             _renderTargetRectangle = dst;
             //_world0?.Camera?.GeneratePerspectiveProjectionMatrix(dst.Width, dst.Height);
             _world0?.Camera?.GeneratePerspectiveProjectionMatrix();
-            
+
 #if DEBUG
             Console.WriteLine(rectangle.ToString());
             Console.WriteLine(factorWidth);
@@ -165,12 +169,13 @@ namespace SeaCollector
         protected override void LoadContent()
         {
             _spriteBatch = new SpriteBatch(GraphicsDevice);
+            GameSceneManager.Instance.RenderContext.SpriteBatch = _spriteBatch;
 
             _background = Content.Load<Texture2D>("Textures/waves");
-            
+
             WorldManager.Instance.Stage("ship");
             WorldManager.Instance.Grab();
-            
+
             base.LoadContent();
         }
 
@@ -178,66 +183,63 @@ namespace SeaCollector
         {
             HxInput.Input.Instance.Update(gameTime);
             Time.Instance.Update(gameTime);
-            
+
             if (HxInput.Input.Instance.IsKeyboardKeyDownOnce(Keys.Escape))
             {
                 Exit();
             }
-            
+
             if (HxInput.Input.Instance.IsKeyboardKeyDownOnce(Keys.D1))
             {
-                WorldManager.Instance.Stage("ship");
+                GameSceneManager.Instance.Stage("menu");
             }
-            
-            if (HxInput.Input.Instance.IsKeyboardKeyDownOnce(Keys.D2))
-            {
-                WorldManager.Instance.Stage("forest1");
-            }
-            
-            if (HxInput.Input.Instance.IsKeyboardKeyDownOnce(Keys.D3))
-            {
-                WorldManager.Instance.Stage("forest2");
-            }
-            if (HxInput.Input.Instance.IsKeyboardKeyDownOnce(Keys.D4))
-            {
-                WorldManager.Instance.Stage("forest3");
-            }
-            
+
             if (HxInput.Input.Instance.IsKeyboardKeyDownOnce(Keys.Space))
             {
-                WorldManager.Instance.Grab();
+                GameSceneManager.Instance.Grab();
             }
-            
+
             if (HxInput.Input.Instance.IsKeyboardKeyDownOnce(Keys.F3))
             {
                 ToggleFullscreen();
             }
-            
-            WorldManager.Instance.Current.Update(gameTime);
+
+            GameSceneManager.Instance.Update(gameTime);
+#if DEBUG
+            if (GameSceneManager.Instance.Current != null)
+            {
+                Console.WriteLine(GameSceneManager.Instance.CurrentKey);
+            }
+#endif
         }
 
         protected override void Draw(GameTime gameTime)
         {
-            var rasterizerState = new RasterizerState();
+            /*var rasterizerState = new RasterizerState();
             rasterizerState.CullMode = CullMode.None;
             GraphicsDevice.RasterizerState = rasterizerState;
             GraphicsDevice.DepthStencilState = DepthStencilState.Default;
 
             //GraphicsDevice.SetRenderTarget(_renderTarget);
             GraphicsDevice.Clear(new Color(78, 202, 255));
-            WorldManager.Instance.Current.Draw(gameTime);
+            GameSceneManager.Instance.Current?.Draw3D(GraphicsDevice, null, Matrix.Identity, Matrix.Identity, Matrix.Identity);
             //GraphicsDevice.SetRenderTarget(null);
 
             //GraphicsDevice.Clear(new Color(78, 202, 255));
-            
+
             _spriteBatch.Begin(samplerState: SamplerState.PointWrap);
+            GameSceneManager.Instance.Current?.Draw2D(gameTime);
             //_spriteBatch.Draw(_background, Vector2.Zero, GraphicsDevice.Viewport.Bounds, Color.White);
             _spriteBatch.End();
-            
+
             _spriteBatch.Begin(SpriteSortMode.Deferred, BlendState.AlphaBlend, SamplerState.PointClamp,
                 DepthStencilState.Default, RasterizerState.CullCounterClockwise);
             //_spriteBatch.Draw(_renderTarget, _renderTargetRectangle, Color.White);
-            _spriteBatch.End();
+            _spriteBatch.End();*/
+            
+            GraphicsDevice.Clear(Color.CornflowerBlue);
+            GameSceneManager.Instance.Draw();
+            
         }
     }
 }
