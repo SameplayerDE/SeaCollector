@@ -194,8 +194,6 @@ namespace SeaCollector
             GameSceneManager.Instance.Draw();
             GraphicsDevice.SetRenderTarget(null);
             
-            
-
             _spriteBatch.Begin(SpriteSortMode.Deferred, BlendState.AlphaBlend, SamplerState.PointClamp,
                 DepthStencilState.Default, RasterizerState.CullCounterClockwise);
             _spriteBatch.Draw(_renderTarget, _renderTargetRectangle, Color.White);

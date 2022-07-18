@@ -135,7 +135,7 @@ namespace SeaCollector.Framework
             if (Current == null)
                 return;
             
-           RenderContext.SpriteBatch.Begin(SpriteSortMode.FrontToBack);
+           RenderContext.SpriteBatch.Begin(samplerState: SamplerState.PointClamp, sortMode: SpriteSortMode.FrontToBack);
            Current.Draw2D(RenderContext);
            RenderContext.SpriteBatch.End();
             
@@ -146,7 +146,7 @@ namespace SeaCollector.Framework
             
             Current.Draw3D(RenderContext);
             
-            RenderContext.SpriteBatch.Begin(SpriteSortMode.FrontToBack);
+            RenderContext.SpriteBatch.Begin(samplerState: SamplerState.PointClamp, sortMode: SpriteSortMode.FrontToBack);
             Current.Draw2D(RenderContext, true);
             RenderContext.SpriteBatch.End();
             
