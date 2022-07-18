@@ -68,15 +68,10 @@ namespace SeaCollector.Framework
         public void Rotate(Vector3 rotation)
         {
             var (x, y, z) = rotation;
-            var nRotation =
-                Matrix.CreateRotationX(x) *
-                Matrix.CreateRotationY(y) *
-                Matrix.CreateRotationZ(z);
-            LocalRotation = Quaternion.CreateFromRotationMatrix(nRotation);
-            //LocalRotation = rotation;
+            Rotate(x, y, z);
         }
         
-        public void Rotate(float x, float y, float z)
+        public virtual void Rotate(float x, float y, float z)
         {
             var nRotation =
                 Matrix.CreateRotationX(x) *
