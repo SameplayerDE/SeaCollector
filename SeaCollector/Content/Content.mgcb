@@ -632,7 +632,7 @@
 /processorParam:TextureFormat=Color
 /build:Textures/waves.png
 
-#begin untitled.obj
+#begin Models/link.obj
 /importer:FbxImporter
 /processor:ModelProcessor
 /processorParam:ColorKeyColor=0,0,0,0
@@ -649,5 +649,5 @@
 /processorParam:Scale=1
 /processorParam:SwapWindingOrder=False
 /processorParam:TextureFormat=Compressed
-/build:untitled.obj
+/build:Models/link.obj
 

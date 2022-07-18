@@ -10,6 +10,7 @@ Ke 0.000000 0.000000 0.000000
 Ni 1.000000
 d 1.000000
 illum 2
+map_Kd ../Textures/Link/main_blue.png
 
 newmtl cap
 Ns 359.999993
@@ -20,6 +21,7 @@ Ke 0.000000 0.000000 0.000000
 Ni 1.000000
 d 1.000000
 illum 2
+map_Kd ../Textures/Link/main_blue.png
 
 newmtl eyeL
 Ns 359.999993
@@ -30,6 +32,7 @@ Ke 0.000000 0.000000 0.000000
 Ni 1.000000
 d 1.000000
 illum 2
+map_Kd ../Textures/Link/eyeL_0.png
 
 newmtl eyeR
 Ns 359.999993
@@ -40,6 +43,7 @@ Ke 0.000000 0.000000 0.000000
 Ni 1.000000
 d 1.000000
 illum 2
+map_Kd ../Textures/Link/eyeR_0.png
 
 newmtl mayuL
 Ns 359.999993
@@ -50,6 +54,7 @@ Ke 0.000000 0.000000 0.000000
 Ni 1.000000
 d 1.000000
 illum 2
+map_Kd ../Textures/Link/mayuL_0.png
 
 newmtl mayuR
 Ns 359.999993
@@ -60,6 +65,7 @@ Ke 0.000000 0.000000 0.000000
 Ni 1.000000
 d 1.000000
 illum 2
+map_Kd ../Textures/Link/mayuR_0.png
 
 newmtl mouth
 Ns 359.999993
@@ -70,6 +76,7 @@ Ke 0.000000 0.000000 0.000000
 Ni 1.000000
 d 1.000000
 illum 2
+map_Kd ../Textures/Link/mouth_0.png
 
 newmtl sheath
 Ns 359.999993
@@ -80,6 +87,7 @@ Ke 0.000000 0.000000 0.000000
 Ni 1.000000
 d 1.000000
 illum 2
+map_Kd ../Textures/Link/sheath1.png
 
 newmtl swA
 Ns 359.999993
@@ -90,3 +98,4 @@ Ke 0.000000 0.000000 0.000000
 Ni 1.000000
 d 1.000000
 illum 2
+map_Kd ../Textures/Link/swA.png

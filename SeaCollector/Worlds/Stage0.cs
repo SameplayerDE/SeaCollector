@@ -18,6 +18,7 @@ namespace SeaCollector.Worlds
         public GameObject GameObject1;
         public Effect Effect;
         public Texture2D Texture;
+        public Model Model;
 
         public Stage0(Game game) : base(game)
         {
@@ -46,6 +47,7 @@ namespace SeaCollector.Worlds
         {
             Effect = Content.Load<Effect>("Effects/TextureCellShader");
             Texture = Content.Load<Texture2D>("Textures/Link/main_red");
+            Model = Content.Load<Model>("Models/link");
         }
 
         public override void UnloadContent()
@@ -113,6 +115,18 @@ namespace SeaCollector.Worlds
             GameObject0.Draw(GraphicsDevice, Effect, WorldMatrix, Camera.View, Camera.Projection);
             GameObject1.Draw(GraphicsDevice, Effect, WorldMatrix, Camera.View, Camera.Projection);
 
+            foreach (ModelMesh mesh in Model.Meshes)
+            {
+                foreach (BasicEffect effect in mesh.Effects)
+                {
+                    effect.World = WorldMatrix;
+                    effect.View = Camera.View;
+                    effect.Projection = Camera.Projection;
+                }
+ 
+                mesh.Draw();
+            }
+            
             //_spriteBatch.Begin(SpriteSortMode.Deferred, BlendState.AlphaBlend, SamplerState.PointClamp, DepthStencilState.Default, RasterizerState.CullCounterClockwise);
             //_spriteBatch.Draw(_renderTarget, GraphicsDevice.PresentationParameters.Bounds, Color.White);
             //_spriteBatch.End();
