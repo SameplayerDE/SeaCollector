@@ -11,7 +11,7 @@ namespace SeaCollector.Rendering.Cameras
         public FixedPerspectiveCamera(GraphicsDevice graphicsDevice) : base(graphicsDevice)
         {
             var presentationParameters = graphicsDevice.PresentationParameters;
-            var aspectRatio = (float)presentationParameters.BackBufferWidth / presentationParameters.BackBufferHeight;
+            var aspectRatio = (float)256 /  192;
             Projection = Matrix.CreatePerspectiveFieldOfView(MathHelper.ToRadians(FieldOfView), aspectRatio, 0.1f, 300f);
         }
     }

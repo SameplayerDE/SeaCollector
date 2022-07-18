@@ -129,13 +129,13 @@ namespace SeaCollector
 
             /*if (width >= height)
             {
-                _renderTargetRectangle.Width = (int)(240 / factorWidth);
+                _renderTargetRectangle.Width = (int)(_preferedScreenSize.X / factorWidth);
                 _renderTargetRectangle.Height = height;
             }
             else
             {
                 _renderTargetRectangle.Width = width;
-                _renderTargetRectangle.Height = 160;
+                _renderTargetRectangle.Height = (int)(_preferedScreenSize.Y / factorHeight);
             }*/
 
             //_renderTargetRectangle.X = (width - _renderTargetRectangle.Width) / 2;
@@ -190,15 +190,16 @@ namespace SeaCollector
         protected override void Draw(GameTime gameTime)
         {
             GraphicsDevice.SetRenderTarget(_renderTarget);
-            GraphicsDevice.SetRenderTarget(null);
-            
             GraphicsDevice.Clear(Color.CornflowerBlue);
             GameSceneManager.Instance.Draw();
+            GraphicsDevice.SetRenderTarget(null);
+            
+            
 
-            /*_spriteBatch.Begin(SpriteSortMode.Deferred, BlendState.AlphaBlend, SamplerState.PointClamp,
+            _spriteBatch.Begin(SpriteSortMode.Deferred, BlendState.AlphaBlend, SamplerState.PointClamp,
                 DepthStencilState.Default, RasterizerState.CullCounterClockwise);
             _spriteBatch.Draw(_renderTarget, _renderTargetRectangle, Color.White);
-            _spriteBatch.End();*/
+            _spriteBatch.End();
         }
     }
 }
