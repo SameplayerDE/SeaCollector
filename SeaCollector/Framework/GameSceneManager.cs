@@ -135,9 +135,9 @@ namespace SeaCollector.Framework
             if (Current == null)
                 return;
             
-           // RenderContext.SpriteBatch.Begin();
-           // Current.Draw2D(RenderContext);
-           // RenderContext.SpriteBatch.End();
+           RenderContext.SpriteBatch.Begin(SpriteSortMode.FrontToBack);
+           Current.Draw2D(RenderContext);
+           RenderContext.SpriteBatch.End();
             
             var rasterizerState = new RasterizerState();
             rasterizerState.CullMode = CullMode.None;
@@ -146,9 +146,9 @@ namespace SeaCollector.Framework
             
             Current.Draw3D(RenderContext);
             
-           // RenderContext.SpriteBatch.Begin();
-           // Current.Draw2D(RenderContext, false);
-           // RenderContext.SpriteBatch.End();
+            RenderContext.SpriteBatch.Begin(SpriteSortMode.FrontToBack);
+            Current.Draw2D(RenderContext, true);
+            RenderContext.SpriteBatch.End();
             
         }
         

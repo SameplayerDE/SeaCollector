@@ -9,27 +9,28 @@ namespace SeaCollector.Framework
 {
     public class GameObject2D : GameObject
     {
-        public Vector2 LocalPosition { get; set; }
-        public Vector2 WorldPosition { get; private set; }
+        public Vector2 LocalPosition;
+        public Vector2 WorldPosition;
 
-        public Vector2 LocalScale { get; set; }
-        public Vector2 WorldScale { get; private set; }
+        public Vector2 LocalScale;
+        public Vector2 WorldScale;
 
-        public float LocalRotation { get; set; }
-        public float WorldRotation { get; private set; }
+        public float LocalRotation;
+        public float WorldRotation;
 
-        public Vector2 PivotPoint { get; set; }
+        public Vector2 PivotPoint;
 
         protected Matrix WorldMatrix;
 
-        public GameObject2D Parent { get; set; }
+        public GameObject2D Parent;
 
-        public List<GameObject2D> Children { get; private set; }
-        public bool CanDraw { get; set; }
+        public List<GameObject2D> Children;
+        public bool CanDraw;
 
-        public bool DrawInFrontOf3D { get; set; }
+        public bool DrawInFrontOf3D;
 
         private GameScene _scene;
+
         public GameScene Scene
         {
             get
@@ -100,7 +101,7 @@ namespace SeaCollector.Framework
         {
             Children.ForEach(child => child.LoadContent(contentManager));
         }
-        
+
         public virtual void UnloadContent()
         {
             Children.ForEach(child => child.UnloadContent());
@@ -125,16 +126,14 @@ namespace SeaCollector.Framework
                 WorldMatrix = Matrix.Multiply(WorldMatrix, Matrix.CreateTranslation(new Vector3(Parent.PivotPoint, 0)));
                 WorldMatrix = Matrix.Multiply(WorldMatrix, Parent.WorldMatrix);
             }
-
-            Vector3 pos, scale;
-            Quaternion rot;
-            if (!WorldMatrix.Decompose(out scale, out rot, out pos))
+            
+            if (!WorldMatrix.Decompose(out var scale, out var rot, out var pos))
             {
                 Debug.WriteLine("Object2D Decompose World Matrix FAILED!");
             }
 
-            var direction = Vector2.Transform(Vector2.UnitX, rot);
-            WorldRotation = (float)Math.Atan2(direction.Y, direction.X);
+            var (x, y) = Vector2.Transform(Vector2.UnitX, rot);
+            WorldRotation = (float)Math.Atan2(y, x);
             WorldRotation = float.IsNaN(WorldRotation) ? 0 : MathHelper.ToDegrees(WorldRotation);
 
             WorldPosition = new Vector2(pos.X, pos.Y);

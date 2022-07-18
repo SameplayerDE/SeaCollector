@@ -1,3 +1,4 @@
+using HxTime;
 using Microsoft.Xna.Framework;
 using Microsoft.Xna.Framework.Graphics;
 using SeaCollector.Entities;
@@ -12,6 +13,8 @@ namespace SeaCollector.Scenes
         private BillboardSystem _forest;
         private Hero _hero;
         private FixedPerspectiveCamera _camera;
+        private GameSprite _gameSprite;
+        private GameSpriteFont _gameSpriteFont;
         
         public MainMenu(Game game) : base("menu", game)
         {
@@ -30,13 +33,30 @@ namespace SeaCollector.Scenes
             _hero.Scale(0.8f, 0.8f, 0.8f);
             
             _hero.AddChild(_camera);
+
+            _gameSprite = new GameSprite("Textures/tree");
+            _gameSprite.DrawInFrontOf3D = false;
+            _gameSprite.Depth = 1;
+
+            _gameSpriteFont = new GameSpriteFont("Fonts/Default");
+            _gameSpriteFont.Text = "Hallo Patrick";
+            _gameSpriteFont.Depth = 0;
+            _gameSpriteFont.DrawInFrontOf3D = false;
             
             AddSceneObject(_hero);
             AddSceneObject(_forest);
+            AddSceneObject(_gameSprite);
+            AddSceneObject(_gameSpriteFont);
 
             GameSceneManager.Instance.RenderContext.Camera = _camera;
             
             base.Initialize();
+        }
+
+        public override void Update(GameTime gameTime)
+        {
+            base.Update(gameTime);
+            _gameSprite.LocalPosition.X += Time.Instance.DeltaSecondsF;
         }
 
         public override void Draw3D(RenderContext renderContext)

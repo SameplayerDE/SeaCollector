@@ -99,7 +99,7 @@ namespace SeaCollector.Framework
             SceneObjects3D.ForEach(sceneObject => sceneObject.Update(gameTime));
         }
 
-        public virtual void Draw2D(RenderContext renderContext, bool drawInFrontOf3D = true)
+        public virtual void Draw2D(RenderContext renderContext, bool drawInFrontOf3D = false)
         {
             SceneObjects2D.ForEach(obj =>
             {

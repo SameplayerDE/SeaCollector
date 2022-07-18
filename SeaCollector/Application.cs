@@ -24,11 +24,7 @@ namespace SeaCollector
         private RenderTarget2D _renderTarget;
         private Rectangle _renderTargetRectangle;
         private Point _preferedScreenSize;
-
-        private Texture2D _background;
-
-        private Stopwatch _drawCallWatch;
-
+        
         private World _world0;
         private World _world1;
 
@@ -66,12 +62,6 @@ namespace SeaCollector
                 GraphicsDevice.PresentationParameters.BackBufferFormat, DepthFormat.Depth24);
             _renderTargetRectangle = new Rectangle(0, 0, _preferedScreenSize.X, _preferedScreenSize.Y);
 
-            _drawCallWatch = new Stopwatch();
-
-            //WorldManager.Instance.ContentManager = Content;
-            //WorldManager.Instance.GraphicsDevice = GraphicsDevice;
-
-            //WorldManager.Instance.Fill(this);
             GameSceneManager.Instance.RenderContext.GraphicsDevice = GraphicsDevice;
             GameSceneManager.Instance.Add(new MainMenu(this));
             GameSceneManager.Instance.Initialize();
@@ -109,7 +99,7 @@ namespace SeaCollector
             }
 
             _renderTargetRectangle = dst;
-            _world0?.Camera?.GeneratePerspectiveProjectionMatrix(dst.Width, dst.Height);
+            GameSceneManager.Instance.RenderContext.Camera.BuildViewMatrix();
         }
 
         private void OnResize(object sender, EventArgs e)
@@ -155,8 +145,7 @@ namespace SeaCollector
             //_renderTargetRectangle.Y = (height - _renderTargetRectangle.Height) / 2;
 
             _renderTargetRectangle = dst;
-            //_world0?.Camera?.GeneratePerspectiveProjectionMatrix(dst.Width, dst.Height);
-            _world0?.Camera?.GeneratePerspectiveProjectionMatrix();
+            GameSceneManager.Instance.RenderContext.Camera.BuildViewMatrix();
 
 #if DEBUG
             Console.WriteLine(rectangle.ToString());
@@ -170,12 +159,6 @@ namespace SeaCollector
         {
             _spriteBatch = new SpriteBatch(GraphicsDevice);
             GameSceneManager.Instance.RenderContext.SpriteBatch = _spriteBatch;
-
-            _background = Content.Load<Texture2D>("Textures/waves");
-
-            WorldManager.Instance.Stage("ship");
-            WorldManager.Instance.Grab();
-
             base.LoadContent();
         }
 
@@ -205,41 +188,20 @@ namespace SeaCollector
             }
 
             GameSceneManager.Instance.Update(gameTime);
-#if DEBUG
-            if (GameSceneManager.Instance.Current != null)
-            {
-                Console.WriteLine(GameSceneManager.Instance.CurrentKey);
-            }
-#endif
         }
 
         protected override void Draw(GameTime gameTime)
         {
-            /*var rasterizerState = new RasterizerState();
-            rasterizerState.CullMode = CullMode.None;
-            GraphicsDevice.RasterizerState = rasterizerState;
-            GraphicsDevice.DepthStencilState = DepthStencilState.Default;
-
-            //GraphicsDevice.SetRenderTarget(_renderTarget);
-            GraphicsDevice.Clear(new Color(78, 202, 255));
-            GameSceneManager.Instance.Current?.Draw3D(GraphicsDevice, null, Matrix.Identity, Matrix.Identity, Matrix.Identity);
-            //GraphicsDevice.SetRenderTarget(null);
-
-            //GraphicsDevice.Clear(new Color(78, 202, 255));
-
-            _spriteBatch.Begin(samplerState: SamplerState.PointWrap);
-            GameSceneManager.Instance.Current?.Draw2D(gameTime);
-            //_spriteBatch.Draw(_background, Vector2.Zero, GraphicsDevice.Viewport.Bounds, Color.White);
-            _spriteBatch.End();
-
-            _spriteBatch.Begin(SpriteSortMode.Deferred, BlendState.AlphaBlend, SamplerState.PointClamp,
-                DepthStencilState.Default, RasterizerState.CullCounterClockwise);
-            //_spriteBatch.Draw(_renderTarget, _renderTargetRectangle, Color.White);
-            _spriteBatch.End();*/
+            GraphicsDevice.SetRenderTarget(_renderTarget);
+            GraphicsDevice.SetRenderTarget(null);
             
             GraphicsDevice.Clear(Color.CornflowerBlue);
             GameSceneManager.Instance.Draw();
-            
+
+            /*_spriteBatch.Begin(SpriteSortMode.Deferred, BlendState.AlphaBlend, SamplerState.PointClamp,
+                DepthStencilState.Default, RasterizerState.CullCounterClockwise);
+            _spriteBatch.Draw(_renderTarget, _renderTargetRectangle, Color.White);
+            _spriteBatch.End();*/
         }
     }
 }

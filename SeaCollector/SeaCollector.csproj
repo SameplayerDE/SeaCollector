@@ -111,12 +111,6 @@
         <None Update="Content\Models\Hulls\hull_0.mtl">
           <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
         </None>
-        <None Update="Content\untitled.mtl">
-          <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
-        </None>
-        <None Update="Content\untitled.obj">
-          <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
-        </None>
         <None Update="Content\Models\link.mtl">
           <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
         </None>
