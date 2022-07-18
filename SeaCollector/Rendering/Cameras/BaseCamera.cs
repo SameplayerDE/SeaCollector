@@ -28,7 +28,7 @@ namespace SeaCollector.Rendering.Cameras
         {
             float x, y, z;
             
-            //WorldRotation.Deconstruct(out x, out y, out z, out var w);
+            WorldRotation.Deconstruct(out x, out y, out z, out var w);
 
             /*var nRotation =
                 Matrix.CreateRotationX(WorldRotation.X) *
@@ -49,8 +49,38 @@ namespace SeaCollector.Rendering.Cameras
             var lookAt = Vector3.Transform(Vector3.Forward, WorldRotation);
             lookAt.Normalize();
 
+            var matrix = Matrix.CreateFromQuaternion(WorldRotation);
+            
+            var Θ = (float)Math.Acos(w) * 2;
+            
+            Θ = float.IsNaN(Θ) ? 0 : Θ;
+            
+            var ax = x / (float)Math.Sin(Θ / 2);
+            var ay = y / (float)Math.Sin(Θ / 2);
+            var az = z / (float)Math.Sin(Θ / 2);
+
+            //ax = x / Math.Sin(Math.Acos(Θ));
+            //ay = y / Math.Sin(Math.Acos(Θ));
+            //az = z / Math.Sin(Math.Acos(Θ));
+            
+            ax = float.IsNaN(ax) ? 0 : ax;
+            ay = float.IsNaN(ay) ? 0 : ay;
+            az = float.IsNaN(az) ? 0 : az;
+            
+            var nRotation =
+                Matrix.CreateRotationX(ax) *
+                Matrix.CreateRotationY(ay) *
+                Matrix.CreateRotationZ(az);
+            
+            Console.WriteLine($"{ax}, {ay}, {az}");
+
+            var roat = WorldRotation;
+            roat.X = 0;
+            roat.Z = 0;
+            roat.Normalize();
+
             Facing = Vector3.Transform(Vector3.Forward, WorldRotation);
-            Forward = Vector3.Transform(Vector3.Forward, WorldRotation);
+            Forward = Vector3.Transform(Vector3.Forward, roat);
             Up = Vector3.Transform(Vector3.Up, WorldRotation);
             
             View = Matrix.CreateLookAt(WorldPosition, WorldPosition + lookAt, Vector3.Up);

@@ -12,7 +12,8 @@ namespace SeaCollector.Entities
     {
         public GameMeshObject GameMeshObject;
 
-        public float _rotation = 0f;
+        public float _rotationX = 0f;
+        public float _rotationY = 0f;
 
         public override void Initialize()
         {
@@ -59,8 +60,9 @@ namespace SeaCollector.Entities
                 Translate(newPosition);
             }
 
-            _rotation += mouseDelta.X * Time.Instance.DeltaSecondsF;
-            Rotate(new Vector3(0, _rotation, 0));
+            _rotationY -= mouseDelta.X * Time.Instance.DeltaSecondsF;
+            _rotationX -= mouseDelta.Y * Time.Instance.DeltaSecondsF;
+            Rotate(new Vector3(_rotationX, _rotationY, 0));
             base.Update(gameTime);
         }
     }
