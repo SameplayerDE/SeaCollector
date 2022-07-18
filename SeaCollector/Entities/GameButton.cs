@@ -36,10 +36,9 @@ namespace SeaCollector.Entities
 
                 if (GameSceneManager.Instance.RenderContext.RenderTargetRectangle.Contains(Mouse.GetState().Position))
                 {
-                    if (_rectangleCollider2D.Contains(Mouse.GetState().Position -
-                                                      GameSceneManager.Instance.RenderContext.RenderTargetRectangle
-                                                          .Location))
+                    if (_rectangleCollider2D.Contains(Mouse.GetState().Position))
                     {
+                        OnEnter();
                         if (HxInput.Input.Instance.IsMouseKeyDown(MouseButton.Left))
                         {
                             OnClick();

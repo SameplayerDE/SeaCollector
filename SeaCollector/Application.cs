@@ -24,10 +24,8 @@ namespace SeaCollector
         private RenderTarget2D _renderTarget;
         public Rectangle RenderTargetRectangle;
         private Point _preferedScreenSize;
-        
-        
-        
-        
+
+
         public Application()
         {
             Content.RootDirectory = "Content";
@@ -40,7 +38,7 @@ namespace SeaCollector
             IsFixedTimeStep = true;
             TargetElapsedTime = TimeSpan.FromSeconds(1d / 60d);
 
-            _preferedScreenSize = new Point(256 * 2, 192 * 2);
+            _preferedScreenSize = new Point(256, 192);
         }
 
         protected override void Initialize()
@@ -65,6 +63,9 @@ namespace SeaCollector
             GameSceneManager.Instance.Add(new MainMenu(this));
             GameSceneManager.Instance.Add(new DemoScene(this));
             GameSceneManager.Instance.Initialize();
+            
+            GameSceneManager.Instance.Stage("menu");
+            GameSceneManager.Instance.Grab();
 
             PerformScreenFit();
 
@@ -79,27 +80,30 @@ namespace SeaCollector
 
         public void PerformScreenFit()
         {
-            var outputAspect = Window.ClientBounds.Width / (float)Window.ClientBounds.Height;
-            var preferredAspect = _preferedScreenSize.X / (float)_preferedScreenSize.Y;
+            var outputAspect = Window.ClientBounds.Width / (float) Window.ClientBounds.Height;
+            var preferredAspect = _preferedScreenSize.X / (float) _preferedScreenSize.Y;
 
             Rectangle dst;
             if (outputAspect <= preferredAspect)
             {
                 // output is taller than it is wider, bars on top/bottom
-                int presentHeight = (int)((Window.ClientBounds.Width / preferredAspect) + 0.5f);
+                int presentHeight = (int) ((Window.ClientBounds.Width / preferredAspect) + 0.5f);
                 int barHeight = (Window.ClientBounds.Height - presentHeight) / 2;
                 dst = new Rectangle(0, barHeight, Window.ClientBounds.Width, presentHeight);
             }
             else
             {
                 // output is wider than it is tall, bars left/right
-                int presentWidth = (int)((Window.ClientBounds.Height * preferredAspect) + 0.5f);
+                int presentWidth = (int) ((Window.ClientBounds.Height * preferredAspect) + 0.5f);
                 int barWidth = (Window.ClientBounds.Width - presentWidth) / 2;
                 dst = new Rectangle(barWidth, 0, presentWidth, Window.ClientBounds.Height);
             }
 
             RenderTargetRectangle = dst;
+
             GameSceneManager.Instance.RenderContext.RenderTargetRectangle = RenderTargetRectangle;
+            GameSceneManager.Instance.RenderContext.RenderTargetScale = Vector2
+                .Divide(RenderTargetRectangle.Size.ToVector2(), _preferedScreenSize.ToVector2()).Length();
             GameSceneManager.Instance.RenderContext.Camera.BuildViewMatrix();
         }
 
@@ -109,24 +113,24 @@ namespace SeaCollector
             var width = rectangle.Width;
             var height = rectangle.Height;
 
-            var outputAspect = Window.ClientBounds.Width / (float)Window.ClientBounds.Height;
-            var preferredAspect = _preferedScreenSize.X / (float)_preferedScreenSize.Y;
+            var outputAspect = Window.ClientBounds.Width / (float) Window.ClientBounds.Height;
+            var preferredAspect = _preferedScreenSize.X / (float) _preferedScreenSize.Y;
 
-            var factorWidth = width / (float)_preferedScreenSize.X;
-            var factorHeight = height / (float)_preferedScreenSize.Y;
+            var factorWidth = width / (float) _preferedScreenSize.X;
+            var factorHeight = height / (float) _preferedScreenSize.Y;
 
             Rectangle dst;
             if (outputAspect <= preferredAspect)
             {
                 // output is taller than it is wider, bars on top/bottom
-                int presentHeight = (int)((Window.ClientBounds.Width / preferredAspect) + 0.5f);
+                int presentHeight = (int) ((Window.ClientBounds.Width / preferredAspect) + 0.5f);
                 int barHeight = (Window.ClientBounds.Height - presentHeight) / 2;
                 dst = new Rectangle(0, barHeight, Window.ClientBounds.Width, presentHeight);
             }
             else
             {
                 // output is wider than it is tall, bars left/right
-                int presentWidth = (int)((Window.ClientBounds.Height * preferredAspect) + 0.5f);
+                int presentWidth = (int) ((Window.ClientBounds.Height * preferredAspect) + 0.5f);
                 int barWidth = (Window.ClientBounds.Width - presentWidth) / 2;
                 dst = new Rectangle(barWidth, 0, presentWidth, Window.ClientBounds.Height);
             }
@@ -146,16 +150,11 @@ namespace SeaCollector
             //_renderTargetRectangle.Y = (height - _renderTargetRectangle.Height) / 2;
 
             RenderTargetRectangle = dst;
-            
-            GameSceneManager.Instance.RenderContext.RenderTargetRectangle = RenderTargetRectangle;
-            GameSceneManager.Instance.RenderContext.Camera.BuildViewMatrix();
 
-#if DEBUG
-            Console.WriteLine(rectangle.ToString());
-            Console.WriteLine(factorWidth);
-            Console.WriteLine(factorHeight);
-            Console.WriteLine(_renderTargetRectangle.ToString());
-#endif
+            GameSceneManager.Instance.RenderContext.RenderTargetRectangle = RenderTargetRectangle;
+            GameSceneManager.Instance.RenderContext.RenderTargetScale = Vector2
+                .Divide(RenderTargetRectangle.Size.ToVector2(), _preferedScreenSize.ToVector2()).Length();
+            GameSceneManager.Instance.RenderContext.Camera.BuildViewMatrix();
         }
 
         protected override void LoadContent()
@@ -169,28 +168,19 @@ namespace SeaCollector
         {
             HxInput.Input.Instance.Update(gameTime);
             Time.Instance.Update(gameTime);
-
+            
             if (HxInput.Input.Instance.IsKeyboardKeyDownOnce(Keys.Escape))
             {
                 Exit();
             }
-
-            if (HxInput.Input.Instance.IsKeyboardKeyDownOnce(Keys.D1))
-            {
-                GameSceneManager.Instance.Stage("menu");
-            }
-
-            if (HxInput.Input.Instance.IsKeyboardKeyDownOnce(Keys.Space))
-            {
-                GameSceneManager.Instance.Grab();
-            }
-
+            
             if (HxInput.Input.Instance.IsKeyboardKeyDownOnce(Keys.F3))
             {
                 ToggleFullscreen();
             }
 
             GameSceneManager.Instance.Update(gameTime);
+            Console.WriteLine(GameSceneManager.Instance.RenderContext.RenderTargetScale);
         }
 
         protected override void Draw(GameTime gameTime)
@@ -199,7 +189,7 @@ namespace SeaCollector
             GraphicsDevice.Clear(Color.CornflowerBlue);
             GameSceneManager.Instance.Draw();
             GraphicsDevice.SetRenderTarget(null);
-            
+
             _spriteBatch.Begin(SpriteSortMode.Deferred, BlendState.AlphaBlend, SamplerState.PointClamp,
                 DepthStencilState.Default, RasterizerState.CullCounterClockwise);
             _spriteBatch.Draw(_renderTarget, RenderTargetRectangle, Color.White);

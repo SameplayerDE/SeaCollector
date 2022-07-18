@@ -15,5 +15,6 @@ namespace SeaCollector.Framework
         public Vector3 Up;
         public Vector3 Right;
         public Rectangle RenderTargetRectangle;
+        public float RenderTargetScale;
     }
 }

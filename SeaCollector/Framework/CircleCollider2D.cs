@@ -9,8 +9,14 @@ namespace SeaCollector.Framework
         
         public override bool Contains(Vector2 position)
         {
-            var distanceToPosition = Vector2.Distance(position, WorldPosition);
-            return distanceToPosition < Radius;
+            var radius = (float)Radius;
+            radius *= GameSceneManager.Instance.RenderContext.RenderTargetScale;
+
+            var center = WorldPosition;
+            center += GameSceneManager.Instance.RenderContext.RenderTargetRectangle.Location.ToVector2();
+
+            var distanceToPosition = Vector2.Distance(position, center);
+            return distanceToPosition < radius;
         }
 
         public override bool Contains(Point position)

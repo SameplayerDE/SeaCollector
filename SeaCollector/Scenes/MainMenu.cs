@@ -22,6 +22,7 @@ namespace SeaCollector.Scenes
             _start = new GameButton("Fonts/Default");
             _start.Text = "Start";
             _start.OnClick += StartClicked;
+            _start.OnEnter += EnterClicked;
 
             AddSceneObject(_start);
             //GameSceneManager.Instance.RenderContext.Camera = _camera;
@@ -33,6 +34,11 @@ namespace SeaCollector.Scenes
         {
             GameSceneManager.Instance.Stage("demo");
             GameSceneManager.Instance.Grab();
+        }
+        
+        private void EnterClicked()
+        {
+            _start.Color = Color.Red;
         }
     }
 }
