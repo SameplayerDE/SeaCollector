@@ -38,13 +38,13 @@ namespace SeaCollector.Entities
                 {
                     if (_rectangleCollider2D.Contains(Mouse.GetState().Position))
                     {
-                        OnEnter();
                         if (HxInput.Input.Instance.IsMouseKeyDown(MouseButton.Left))
                         {
                             OnClick();
                         }
                     }
                 }
+                
             }
         }
 
