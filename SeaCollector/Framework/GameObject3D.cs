@@ -1,3 +1,4 @@
+using System;
 using System.Collections.Generic;
 using System.Diagnostics;
 using Microsoft.Xna.Framework;
@@ -72,6 +73,7 @@ namespace SeaCollector.Framework
                 Matrix.CreateRotationY(y) *
                 Matrix.CreateRotationZ(z);
             LocalRotation = Quaternion.CreateFromRotationMatrix(nRotation);
+            //LocalRotation = rotation;
         }
         
         public void Rotate(float x, float y, float z)
@@ -81,6 +83,7 @@ namespace SeaCollector.Framework
                 Matrix.CreateRotationY(y) *
                 Matrix.CreateRotationZ(z);
             LocalRotation = Quaternion.CreateFromRotationMatrix(nRotation);
+            //LocalRotation = new Vector3(x, y, z);
         }
         
         public void Rotate(Quaternion rotation)
@@ -110,6 +113,13 @@ namespace SeaCollector.Framework
 
         public virtual void Update(GameTime gameTime)
         {
+            
+            /*var nRotation =
+                Matrix.CreateRotationX(LocalRotation.X) *
+                Matrix.CreateRotationY(LocalRotation.Y) *
+                Matrix.CreateRotationZ(LocalRotation.Z);
+            */
+            
             WorldMatrix = Matrix.CreateFromQuaternion(LocalRotation) *
                           Matrix.CreateScale(LocalScale) *
                           Matrix.CreateTranslation(LocalPosition);
@@ -117,7 +127,7 @@ namespace SeaCollector.Framework
             if (Parent != null)
             {
                 WorldMatrix = Matrix.Multiply(WorldMatrix, Parent.WorldMatrix);
-
+                
                 if (!WorldMatrix.Decompose(out var scale, out var rotation, out var position))
                     Debug.WriteLine("Object3D Decompose World Matrix FAILED!");
 
@@ -133,6 +143,46 @@ namespace SeaCollector.Framework
             }
 
             Children.ForEach(child => child.Update(gameTime));
+        }
+        
+        private Vector3 ToEuler(Quaternion quaternion)
+        {
+            var result = Vector3.Zero;
+            
+            quaternion.Deconstruct(out var qx, out var qy, out var qz, out var qw);
+            
+            result.Z = -(float)Math.Atan2(-2*(qy*qz-qw*qx), qw*qw-qx*qx-qy*qy+qz*qz);
+            result.X = (float)Math.Asin(2*(qx*qz + qw*qy));
+            result.Y = (float)Math.Atan2(-2*(qx*qy-qw*qz), qw*qw+qx*qx-qy*qy-qz*qz);
+            return result;
+        }
+        
+        public static Vector3 ToEulerAngles(Quaternion q)
+        {
+            var angles = Vector3.Zero;
+
+            // roll (x-axis rotation)
+            double sinr_cosp = 2 * (q.W * q.X + q.Y * q.Z);
+            double cosr_cosp = 1 - 2 * (q.X * q.X + q.Y * q.Y);
+            angles.Z = (float)Math.Atan2(sinr_cosp, cosr_cosp);
+
+            // pitch (y-axis rotation)
+            double sinp = 2 * (q.W * q.Y - q.Z * q.X);
+            if (Math.Abs(sinp) >= 1)
+            {
+                angles.X = (float)Math.CopySign(Math.PI / 2, sinp);
+            }
+            else
+            {
+                angles.X = (float)Math.Asin(sinp);
+            }
+
+            // yaw (z-axis rotation)
+            double siny_cosp = 2 * (q.W * q.Z + q.X * q.Y);
+            double cosy_cosp = 1 - 2 * (q.Y * q.Y + q.Z * q.Z);
+            angles.Y = -(float)Math.Atan2(siny_cosp, cosy_cosp);
+
+            return angles;
         }
 
         public virtual void Draw(RenderContext renderContext)
