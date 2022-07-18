@@ -25,10 +25,7 @@ namespace SeaCollector
         private Rectangle _renderTargetRectangle;
         private Point _preferedScreenSize;
         
-        private World _world0;
-        private World _world1;
-
-
+        
         public Application()
         {
             Content.RootDirectory = "Content";

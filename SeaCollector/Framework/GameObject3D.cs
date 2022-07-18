@@ -114,11 +114,11 @@ namespace SeaCollector.Framework
         public virtual void Update(GameTime gameTime)
         {
             
-            /*var nRotation =
+            var nRotation =
                 Matrix.CreateRotationX(LocalRotation.X) *
                 Matrix.CreateRotationY(LocalRotation.Y) *
                 Matrix.CreateRotationZ(LocalRotation.Z);
-            */
+            //
             
             WorldMatrix = Matrix.CreateFromQuaternion(LocalRotation) *
                           Matrix.CreateScale(LocalScale) *
@@ -130,6 +130,11 @@ namespace SeaCollector.Framework
                 
                 if (!WorldMatrix.Decompose(out var scale, out var rotation, out var position))
                     Debug.WriteLine("Object3D Decompose World Matrix FAILED!");
+
+                var pRotation =
+                    Matrix.CreateRotationX(Parent.LocalRotation.X) *
+                    Matrix.CreateRotationY(Parent.LocalRotation.Y) *
+                    Matrix.CreateRotationZ(Parent.LocalRotation.Z);
 
                 WorldPosition = position;
                 WorldScale = scale;
@@ -149,11 +154,13 @@ namespace SeaCollector.Framework
         {
             var result = Vector3.Zero;
             
+            quaternion.Normalize();
             quaternion.Deconstruct(out var qx, out var qy, out var qz, out var qw);
             
-            result.Z = -(float)Math.Atan2(-2*(qy*qz-qw*qx), qw*qw-qx*qx-qy*qy+qz*qz);
-            result.X = (float)Math.Asin(2*(qx*qz + qw*qy));
-            result.Y = (float)Math.Atan2(-2*(qx*qy-qw*qz), qw*qw+qx*qx-qy*qy-qz*qz);
+            result.X = (float)Math.Atan2(-2*(qy*qz-qw*qx), qw*qw-qx*qx-qy*qy+qz*qz);
+            result.Y = (float)Math.Asin(2*(qx*qz + qw*qy));
+            result.Z = (float)Math.Atan2(-2*(qx*qy-qw*qz), qw*qw+qx*qx-qy*qy-qz*qz);
+
             return result;
         }
         

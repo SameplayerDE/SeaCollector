@@ -28,21 +28,32 @@ namespace SeaCollector.Rendering.Cameras
         {
             float x, y, z;
             
-            WorldRotation.Deconstruct(out x, out y, out z, out var w);
+            //WorldRotation.Deconstruct(out x, out y, out z, out var w);
 
+            /*var nRotation =
+                Matrix.CreateRotationX(WorldRotation.X) *
+                Matrix.CreateRotationY(WorldRotation.Y) *
+                Matrix.CreateRotationZ(WorldRotation.Z);
+
+            var nRotationXY =
+                Matrix.CreateRotationX(WorldRotation.X) *
+                Matrix.CreateRotationY(WorldRotation.Y);
+            
+            var lookAt = Vector3.Transform(Vector3.Forward, nRotation);
+            lookAt.Normalize();
+
+            Facing = Vector3.Transform(Vector3.Forward, nRotation);
+            Forward = Vector3.Transform(Vector3.Forward, nRotationXY);
+            Up = Vector3.Transform(Vector3.Up, nRotation);*/
+            
             var lookAt = Vector3.Transform(Vector3.Forward, WorldRotation);
             lookAt.Normalize();
 
-            var (roll, pitch, yaw) = ToEulerAngles(WorldRotation);
-            
             Facing = Vector3.Transform(Vector3.Forward, WorldRotation);
-            //Facing.Y = Facing.Z;
-            //Facing.Z = 0;
-            Console.WriteLine(Facing.ToString());
-            //Forward = new Vector3(1, Facing.Y, 0);
+            Forward = Vector3.Transform(Vector3.Forward, WorldRotation);
             Up = Vector3.Transform(Vector3.Up, WorldRotation);
             
-            View = Matrix.CreateLookAt(WorldPosition, WorldPosition + Facing, Vector3.Up);
+            View = Matrix.CreateLookAt(WorldPosition, WorldPosition + lookAt, Vector3.Up);
             
         }
 
