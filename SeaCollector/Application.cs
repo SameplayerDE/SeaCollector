@@ -22,8 +22,10 @@ namespace SeaCollector
         private Random _random = new Random();
 
         private RenderTarget2D _renderTarget;
-        private Rectangle _renderTargetRectangle;
+        public Rectangle RenderTargetRectangle;
         private Point _preferedScreenSize;
+        
+        
         
         
         public Application()
@@ -57,10 +59,11 @@ namespace SeaCollector
 
             _renderTarget = new RenderTarget2D(GraphicsDevice, _preferedScreenSize.X, _preferedScreenSize.Y, false,
                 GraphicsDevice.PresentationParameters.BackBufferFormat, DepthFormat.Depth24);
-            _renderTargetRectangle = new Rectangle(0, 0, _preferedScreenSize.X, _preferedScreenSize.Y);
+            RenderTargetRectangle = new Rectangle(0, 0, _preferedScreenSize.X, _preferedScreenSize.Y);
 
             GameSceneManager.Instance.RenderContext.GraphicsDevice = GraphicsDevice;
             GameSceneManager.Instance.Add(new MainMenu(this));
+            GameSceneManager.Instance.Add(new DemoScene(this));
             GameSceneManager.Instance.Initialize();
 
             PerformScreenFit();
@@ -95,7 +98,8 @@ namespace SeaCollector
                 dst = new Rectangle(barWidth, 0, presentWidth, Window.ClientBounds.Height);
             }
 
-            _renderTargetRectangle = dst;
+            RenderTargetRectangle = dst;
+            GameSceneManager.Instance.RenderContext.RenderTargetRectangle = RenderTargetRectangle;
             GameSceneManager.Instance.RenderContext.Camera.BuildViewMatrix();
         }
 
@@ -141,7 +145,9 @@ namespace SeaCollector
             //_renderTargetRectangle.X = (width - _renderTargetRectangle.Width) / 2;
             //_renderTargetRectangle.Y = (height - _renderTargetRectangle.Height) / 2;
 
-            _renderTargetRectangle = dst;
+            RenderTargetRectangle = dst;
+            
+            GameSceneManager.Instance.RenderContext.RenderTargetRectangle = RenderTargetRectangle;
             GameSceneManager.Instance.RenderContext.Camera.BuildViewMatrix();
 
 #if DEBUG
@@ -196,7 +202,7 @@ namespace SeaCollector
             
             _spriteBatch.Begin(SpriteSortMode.Deferred, BlendState.AlphaBlend, SamplerState.PointClamp,
                 DepthStencilState.Default, RasterizerState.CullCounterClockwise);
-            _spriteBatch.Draw(_renderTarget, _renderTargetRectangle, Color.White);
+            _spriteBatch.Draw(_renderTarget, RenderTargetRectangle, Color.White);
             _spriteBatch.End();
         }
     }

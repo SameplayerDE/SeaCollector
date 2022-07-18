@@ -7,7 +7,7 @@ using Microsoft.Xna.Framework.Graphics;
 
 namespace SeaCollector.Framework
 {
-    public abstract class GameObject3D
+    public abstract class GameObject3D : GameObject
     {
         public Vector3 LocalPosition;
         public Vector3 WorldPosition;
@@ -23,6 +23,18 @@ namespace SeaCollector.Framework
 
         public Matrix WorldMatrix;
 
+        
+        public GameScene Scene
+        {
+            get
+            {
+                if (_scene != null) return _scene;
+                if (Parent != null) return Parent.Scene;
+                return null;
+            }
+
+            set { _scene = value; }
+        }
 
         protected GameObject3D()
         {

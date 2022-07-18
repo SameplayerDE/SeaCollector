@@ -29,8 +29,7 @@ namespace SeaCollector.Framework
 
         public bool DrawInFrontOf3D;
 
-        private GameScene _scene;
-
+        
         public GameScene Scene
         {
             get

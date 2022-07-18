@@ -61,6 +61,7 @@ namespace SeaCollector.Framework
         {
             if (SceneObjects3D.Contains(sceneObject))
                 return;
+            sceneObject.Scene = this;
             SceneObjects3D.Add(sceneObject);
         }
 
@@ -70,6 +71,7 @@ namespace SeaCollector.Framework
             {
                 return;
             }
+            sceneObject.Scene = null;
         }
 
         public virtual void Activated(){}

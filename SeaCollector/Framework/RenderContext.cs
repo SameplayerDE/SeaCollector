@@ -14,5 +14,6 @@ namespace SeaCollector.Framework
         public Matrix Projection;
         public Vector3 Up;
         public Vector3 Right;
+        public Rectangle RenderTargetRectangle;
     }
 }
