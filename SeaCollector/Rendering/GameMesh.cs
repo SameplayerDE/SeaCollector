@@ -101,7 +101,7 @@ namespace SeaCollector.Rendering
                     //splitList.AddRange(indexPair);
                 }*/
 
-                /*result.VertexBuffer = new VertexBuffer(
+                result.VertexBuffer = new VertexBuffer(
                     graphicsDevice,
                     VertexPositionNormalColorTexture.VertexDeclaration,
                     list.Count,
@@ -113,28 +113,35 @@ namespace SeaCollector.Rendering
                     typeof(short),
                     list.Count,
                     BufferUsage.WriteOnly
-                );*/
-
+                );
+                
                 var listArray = list.ToArray();
-                meshPart.VertexBuffer = new VertexBuffer(graphicsDevice,
-                    VertexPositionNormalColorTexture.VertexDeclaration,
-                    result.Data.Length, BufferUsage.WriteOnly);
-
-                meshPart.IndexBuffer = new IndexBuffer(graphicsDevice, IndexElementSize.ThirtyTwoBits,
-                    result.Data.Length,
-                    BufferUsage.WriteOnly);
-
+                result.Data = listArray;
                 var meshIndices = new int [result.Data.Length];
                 for (var i = 0; i < meshIndices.Length; i++)
                 {
                     meshIndices[i] = i;
                 }
+                
+                result.VertexBuffer.SetData(result.Data);
+                result.IndexBuffer.SetData(meshIndices);
 
-                meshPart.VertexBuffer.SetData(result.Data);
-                meshPart.IndexBuffer.SetData(meshIndices);
-                result.MeshParts.Add(meshPart);
+               
+                /*meshPart.VertexBuffer = new VertexBuffer(graphicsDevice,
+                    VertexPositionNormalColorTexture.VertexDeclaration,
+                    result.Data.Length, BufferUsage.WriteOnly);
+
+                meshPart.IndexBuffer = new IndexBuffer(graphicsDevice, IndexElementSize.ThirtyTwoBits,
+                    result.Data.Length,
+                    BufferUsage.WriteOnly);*/
+
+                
+
+                //meshPart.VertexBuffer.SetData(result.Data);
+                //meshPart.IndexBuffer.SetData(meshIndices);
+                //result.MeshParts.Add(meshPart);
                 //VertexPositionNormalColorTexture.CalculateNormals(listArray);
-                result.Data = listArray;
+                
             }
 
             else if (extension == ".obj")

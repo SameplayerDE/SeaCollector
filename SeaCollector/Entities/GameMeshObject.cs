@@ -30,13 +30,19 @@ namespace SeaCollector.Entities
             
             GameMesh = GameMesh.LoadFromFile(graphicsDevice, GameMeshFile);
             Effect = contentManager.Load<Effect>(EffectFile);
-            Texture2D = contentManager.Load<Texture2D>(TextureFile);
+            if (!string.IsNullOrEmpty(TextureFile))
+            {
+                Texture2D = contentManager.Load<Texture2D>(TextureFile);
+            }
         }
 
         public override void Draw(RenderContext renderContext)
         {
             base.Draw(renderContext);
-            Effect.Parameters["Texture00"]?.SetValue(Texture2D);
+            if (!string.IsNullOrEmpty(TextureFile))
+            {
+                Effect.Parameters["Texture00"]?.SetValue(Texture2D);
+            }
             GameMesh.Draw(renderContext.GraphicsDevice, Effect, WorldMatrix, renderContext.Camera.View, renderContext.Camera.Projection);
         }
     }

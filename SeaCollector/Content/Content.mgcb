@@ -79,6 +79,12 @@
 /processorParam:DebugMode=Auto
 /build:Effects/TextureShader.fx
 
+#begin Effects/BasicSpriteShader.fx
+/importer:EffectImporter
+/processor:EffectProcessor
+/processorParam:DebugMode=Auto
+/build:Effects/BasicSpriteShader.fx
+
 #begin Fonts/Default.spritefont
 /importer:FontDescriptionImporter
 /processor:FontDescriptionProcessor
@@ -590,6 +596,30 @@
 /processorParam:MakeSquare=False
 /processorParam:TextureFormat=Color
 /build:Textures/player_map.png
+
+#begin Textures/gras.png
+/importer:TextureImporter
+/processor:TextureProcessor
+/processorParam:ColorKeyColor=255,0,255,255
+/processorParam:ColorKeyEnabled=True
+/processorParam:GenerateMipmaps=False
+/processorParam:PremultiplyAlpha=True
+/processorParam:ResizeToPowerOfTwo=False
+/processorParam:MakeSquare=False
+/processorParam:TextureFormat=Color
+/build:Textures/gras.png
+
+#begin Textures/dirt.png
+/importer:TextureImporter
+/processor:TextureProcessor
+/processorParam:ColorKeyColor=255,0,255,255
+/processorParam:ColorKeyEnabled=True
+/processorParam:GenerateMipmaps=False
+/processorParam:PremultiplyAlpha=True
+/processorParam:ResizeToPowerOfTwo=False
+/processorParam:MakeSquare=False
+/processorParam:TextureFormat=Color
+/build:Textures/dirt.png
 
 #begin Textures/stone.png
 /importer:TextureImporter

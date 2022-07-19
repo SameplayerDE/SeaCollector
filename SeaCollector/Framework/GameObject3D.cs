@@ -18,6 +18,10 @@ namespace SeaCollector.Framework
         public Vector3 LocalScale;
         public Vector3 WorldScale;
 
+        public bool FixedRotationY = false;
+        public bool FixedRotationX = false;
+        public bool FixedRotationZ = false;
+        
         public GameObject3D Parent;
         public List<GameObject3D> Children;
 
@@ -143,6 +147,30 @@ namespace SeaCollector.Framework
                     Matrix.CreateRotationY(Parent.LocalRotation.Y) *
                     Matrix.CreateRotationZ(Parent.LocalRotation.Z);
 
+                if (FixedRotationX)
+                {
+                    var quaternion = rotation;
+                    quaternion.X = 0;
+                    quaternion.Normalize();
+                    rotation = quaternion;
+                }
+                
+                if (FixedRotationY)
+                {
+                    var quaternion = rotation;
+                    quaternion.Y = 0;
+                    quaternion.Normalize();
+                    rotation = quaternion;
+                }
+                
+                if (FixedRotationZ)
+                {
+                    var quaternion = rotation;
+                    quaternion.Z = 0;
+                    quaternion.Normalize();
+                    rotation = quaternion;
+                }
+                
                 WorldPosition = position;
                 WorldScale = scale;
                 WorldRotation = rotation;

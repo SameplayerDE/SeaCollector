@@ -61,7 +61,7 @@ namespace SeaCollector.Entities
             }
 
             _rotationY -= mouseDelta.X * Time.Instance.DeltaSecondsF;
-            _rotationX -= mouseDelta.Y * Time.Instance.DeltaSecondsF;
+            //_rotationX -= mouseDelta.Y * Time.Instance.DeltaSecondsF;
             
             if (_rotationY < 0) _rotationY += MathHelper.ToRadians(360);
             _rotationX = Math.Clamp(_rotationX, MathHelper.ToRadians(-89.9f), MathHelper.ToRadians(89.9f));

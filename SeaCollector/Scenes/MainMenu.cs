@@ -22,7 +22,7 @@ namespace SeaCollector.Scenes
             _start = new GameButton("Fonts/Default");
             _start.Text = "Start";
             _start.OnClick += StartClicked;
-            _start.Translate(128, 0);
+            _start.Translate(128, 96);
 
             AddSceneObject(_start);
             //GameSceneManager.Instance.RenderContext.Camera = _camera;
