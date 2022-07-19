@@ -50,16 +50,14 @@ namespace SeaCollector.Entities
             {
                 direction.Normalize();
                 _destrotationY = (float)Math.Atan2(-direction.X, -direction.Z);
+                _rotationY = (float)Math.Atan2(-direction.X, -direction.Z);
                 direction *= 3f;
                 direction *= Time.Instance.DeltaSecondsF;
                 
                 var tRotation = Quaternion.Identity;
                 var tPosition = Vector3.Zero;
                 var tScale = Vector3.One;
-                direction = Vector3.Transform(Vector3.Forward, WorldRotation);
-                direction.Normalize();
-                direction *= 3f;
-                direction *= Time.Instance.DeltaSecondsF;
+                
                 
                 Rotate(Quaternion.CreateFromAxisAngle(Vector3.Up, _rotationY));
                 WorldMatrix.Decompose(out tScale, out tRotation, out tPosition);
@@ -68,8 +66,8 @@ namespace SeaCollector.Entities
                 Translate(newPosition);
             }
 
-            _rotationY = MathHelper.WrapAngle(_rotationY);
-            _rotationY = CurveAngle(_rotationY, _destrotationY, 0.09f);
+            //_rotationY = MathHelper.WrapAngle(_rotationY);
+            //_rotationY = CurveAngle(_rotationY, _destrotationY, 0.09f);
             //if (_rotationY < 0) _rotationY += MathHelper.ToRadians(360);
             //_rotationY -= mouseDelta.X * Time.Instance.DeltaSecondsF;
             //_rotationX -= mouseDelta.Y * Time.Instance.DeltaSecondsF;
