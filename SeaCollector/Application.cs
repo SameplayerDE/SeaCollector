@@ -180,7 +180,6 @@ namespace SeaCollector
             }
 
             GameSceneManager.Instance.Update(gameTime);
-            Console.WriteLine(GameSceneManager.Instance.RenderContext.RenderTargetScale);
         }
 
         protected override void Draw(GameTime gameTime)
