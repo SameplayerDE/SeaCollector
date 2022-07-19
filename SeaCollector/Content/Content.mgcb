@@ -13,6 +13,12 @@
 
 #---------------------------------- Content ---------------------------------#
 
+#begin Effects/BasicSpriteShader.fx
+/importer:EffectImporter
+/processor:EffectProcessor
+/processorParam:DebugMode=Auto
+/build:Effects/BasicSpriteShader.fx
+
 #begin Effects/BillboardShader.fx
 /importer:EffectImporter
 /processor:EffectProcessor
@@ -30,6 +36,12 @@
 /processor:EffectProcessor
 /processorParam:DebugMode=Auto
 /build:Effects/InstanceShader.fx
+
+#begin Effects/InstanceTextureCellShader.fx
+/importer:EffectImporter
+/processor:EffectProcessor
+/processorParam:DebugMode=Auto
+/build:Effects/InstanceTextureCellShader.fx
 
 #begin Effects/IslandShader.fx
 /importer:EffectImporter
@@ -79,12 +91,6 @@
 /processorParam:DebugMode=Auto
 /build:Effects/TextureShader.fx
 
-#begin Effects/BasicSpriteShader.fx
-/importer:EffectImporter
-/processor:EffectProcessor
-/processorParam:DebugMode=Auto
-/build:Effects/BasicSpriteShader.fx
-
 #begin Fonts/Default.spritefont
 /importer:FontDescriptionImporter
 /processor:FontDescriptionProcessor
@@ -129,6 +135,18 @@
 /processorParam:Quality=Best
 /build:Sounds/collect.ogg
 
+#begin Textures/dirt.png
+/importer:TextureImporter
+/processor:TextureProcessor
+/processorParam:ColorKeyColor=255,0,255,255
+/processorParam:ColorKeyEnabled=True
+/processorParam:GenerateMipmaps=False
+/processorParam:PremultiplyAlpha=True
+/processorParam:ResizeToPowerOfTwo=False
+/processorParam:MakeSquare=False
+/processorParam:TextureFormat=Color
+/build:Textures/dirt.png
+
 #begin Textures/dither.png
 /importer:TextureImporter
 /processor:TextureProcessor
@@ -152,6 +170,18 @@
 /processorParam:MakeSquare=False
 /processorParam:TextureFormat=Color
 /build:Textures/flowers.png
+
+#begin Textures/gras.png
+/importer:TextureImporter
+/processor:TextureProcessor
+/processorParam:ColorKeyColor=255,0,255,255
+/processorParam:ColorKeyEnabled=True
+/processorParam:GenerateMipmaps=False
+/processorParam:PremultiplyAlpha=True
+/processorParam:ResizeToPowerOfTwo=False
+/processorParam:MakeSquare=False
+/processorParam:TextureFormat=Color
+/build:Textures/gras.png
 
 #begin Textures/Link/eyeL_0.png
 /importer:TextureImporter
@@ -585,6 +615,18 @@
 /processorParam:TextureFormat=Color
 /build:Textures/mokutaru.png
 
+#begin Textures/pixel.png
+/importer:TextureImporter
+/processor:TextureProcessor
+/processorParam:ColorKeyColor=255,0,255,255
+/processorParam:ColorKeyEnabled=True
+/processorParam:GenerateMipmaps=False
+/processorParam:PremultiplyAlpha=True
+/processorParam:ResizeToPowerOfTwo=False
+/processorParam:MakeSquare=False
+/processorParam:TextureFormat=Color
+/build:Textures/pixel.png
+
 #begin Textures/player_map.png
 /importer:TextureImporter
 /processor:TextureProcessor
@@ -596,30 +638,6 @@
 /processorParam:MakeSquare=False
 /processorParam:TextureFormat=Color
 /build:Textures/player_map.png
-
-#begin Textures/gras.png
-/importer:TextureImporter
-/processor:TextureProcessor
-/processorParam:ColorKeyColor=255,0,255,255
-/processorParam:ColorKeyEnabled=True
-/processorParam:GenerateMipmaps=False
-/processorParam:PremultiplyAlpha=True
-/processorParam:ResizeToPowerOfTwo=False
-/processorParam:MakeSquare=False
-/processorParam:TextureFormat=Color
-/build:Textures/gras.png
-
-#begin Textures/dirt.png
-/importer:TextureImporter
-/processor:TextureProcessor
-/processorParam:ColorKeyColor=255,0,255,255
-/processorParam:ColorKeyEnabled=True
-/processorParam:GenerateMipmaps=False
-/processorParam:PremultiplyAlpha=True
-/processorParam:ResizeToPowerOfTwo=False
-/processorParam:MakeSquare=False
-/processorParam:TextureFormat=Color
-/build:Textures/dirt.png
 
 #begin Textures/stone.png
 /importer:TextureImporter
@@ -645,6 +663,18 @@
 /processorParam:TextureFormat=Color
 /build:Textures/tree.png
 
+#begin Textures/tree_diffuse.png
+/importer:TextureImporter
+/processor:TextureProcessor
+/processorParam:ColorKeyColor=255,0,255,255
+/processorParam:ColorKeyEnabled=True
+/processorParam:GenerateMipmaps=False
+/processorParam:PremultiplyAlpha=True
+/processorParam:ResizeToPowerOfTwo=False
+/processorParam:MakeSquare=False
+/processorParam:TextureFormat=Color
+/build:Textures/tree_diffuse.png
+
 #begin Textures/water_map.png
 /importer:TextureImporter
 /processor:TextureProcessor
@@ -669,14 +699,3 @@
 /processorParam:TextureFormat=Color
 /build:Textures/waves.png
 
-#begin Textures/pixel.png
-/importer:TextureImporter
-/processor:TextureProcessor
-/processorParam:ColorKeyColor=255,0,255,255
-/processorParam:ColorKeyEnabled=True
-/processorParam:GenerateMipmaps=False
-/processorParam:PremultiplyAlpha=True
-/processorParam:ResizeToPowerOfTwo=False
-/processorParam:MakeSquare=False
-/processorParam:TextureFormat=Color
-/build:Textures/pixel.png

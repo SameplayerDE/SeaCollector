@@ -38,7 +38,7 @@ namespace SeaCollector
             IsFixedTimeStep = true;
             TargetElapsedTime = TimeSpan.FromSeconds(1d / 60d);
 
-            _preferedScreenSize = new Point(256 * 4, 192 * 4);
+            _preferedScreenSize = new Point(256 * 2, 192 * 2);
         }
 
         protected override void Initialize()
@@ -53,7 +53,7 @@ namespace SeaCollector
             _graphicsDeviceManager.ApplyChanges();
 
             Window.AllowUserResizing = true;
-            //Window.ClientSizeChanged += OnResize;
+            Window.ClientSizeChanged += OnResize;
 
             _renderTarget = new RenderTarget2D(GraphicsDevice, _preferedScreenSize.X, _preferedScreenSize.Y, false,
                 GraphicsDevice.PresentationParameters.BackBufferFormat, DepthFormat.Depth24);
@@ -68,7 +68,7 @@ namespace SeaCollector
             GameSceneManager.Instance.Stage("menu");
             GameSceneManager.Instance.Grab();
 
-            //PerformScreenFit();
+            PerformScreenFit();
 
             base.Initialize();
         }

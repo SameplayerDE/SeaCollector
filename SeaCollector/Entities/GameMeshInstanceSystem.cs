@@ -1,44 +1,25 @@
-using System;
+
+    using System;
 using Microsoft.Xna.Framework.Content;
 using Microsoft.Xna.Framework.Graphics;
 using SeaCollector.Framework;
-using SharpDX;
+    using SeaCollector.Rendering;
+    using SharpDX;
 using Matrix = Microsoft.Xna.Framework.Matrix;
-using Vector2 = Microsoft.Xna.Framework.Vector2;
+    using RenderContext = SeaCollector.Framework.RenderContext;
+    using Vector2 = Microsoft.Xna.Framework.Vector2;
 using Vector3 = Microsoft.Xna.Framework.Vector3;
 using Vector4 = Microsoft.Xna.Framework.Vector4;
 
 namespace SeaCollector.Entities
 {
     
-    public enum BillboardMode
+    public class GameMeshInstanceSystem : GameObject3D
     {
-        Cylindrical,
-        Spherical
-    };
-
-    public struct InstanceInfo
-    {
-        public Vector4 World;
-    };
-    
-    public class BillboardSystem : GameObject3D
-    {
-        public BillboardMode Mode = BillboardMode.Spherical;
-        public VertexBuffer VertexBuffer; //VertexBuffer
-        public IndexBuffer IndexBuffer; //IndexBuffer
-
-        public VertexPositionTexture[] Particles;
-
-        private int[] _indices;
-
-        public Vector2 BillboardSize;
         public bool EnsureOcclusion = true;
-
-        public Texture2D Texture;
-        public GraphicsDevice GraphicsDevice;
-        public Effect Effect;
         
+        public GraphicsDevice GraphicsDevice;
+
         //Instancing
         public VertexDeclaration InstanceVertexDeclaration;
         public VertexBuffer InstanceBuffer;
@@ -47,30 +28,39 @@ namespace SeaCollector.Entities
         public int InstanceCount;
         
         public string TextureFile;
-        public string EffectFile = "Effects/BillboardShader";
+        public string EffectFile = "Effects/InstanceTextureCellShader";
+        public string GameMeshFile;
         
-        public BillboardSystem(GraphicsDevice graphicsDevice, Vector2 billboardSize, string texture)
+        public Texture2D Texture2D;
+        public Effect Effect;
+        public GameMesh GameMesh;
+
+        public GameMeshInstanceSystem(GraphicsDevice graphicsDevice, string textureFile, string gameMeshFile)
         {
-            BillboardSize = billboardSize;
+            GameMeshFile = gameMeshFile;
+            TextureFile = textureFile;
             GraphicsDevice = graphicsDevice;
-            TextureFile = texture;
         }
 
         public override void LoadContent(GraphicsDevice graphicsDevice, ContentManager contentManager)
         {
-            Texture = contentManager.Load<Texture2D>(TextureFile);
+            
             Effect = contentManager.Load<Effect>(EffectFile);
+            if (!string.IsNullOrEmpty(TextureFile))
+            {
+                Texture2D = contentManager.Load<Texture2D>(TextureFile);
+            }
             base.LoadContent(graphicsDevice, contentManager);
         }
 
         public override void Initialize()
         {
             GenerateInstanceVertexDeclaration();
-            GenerateGeometry();
+            GameMesh = GameMesh.LoadFromFile(GraphicsDevice, GameMeshFile);
             GenerateInstanceInformation(GraphicsDevice);
 
             Bindings = new VertexBufferBinding[2];
-            Bindings[0] = new VertexBufferBinding(VertexBuffer);
+            Bindings[0] = new VertexBufferBinding(GameMesh.VertexBuffer);
             Bindings[1] = new VertexBufferBinding(InstanceBuffer, 0, 1);
             base.Initialize();
         }
@@ -104,59 +94,7 @@ namespace SeaCollector.Entities
                 InstanceCount, BufferUsage.WriteOnly);
             InstanceBuffer.SetData(Instances);
         }
-
-        private void GenerateGeometry()
-        {
-            // Create vertex and index arrays
-            Particles = new VertexPositionTexture[4];
-            _indices = new int[6];
-            var x = 0;
-            // For each billboard...
-            for (var i = 0; i < 4; i += 4)
-            {
-                var position = Vector3.Zero;
-                // Add 4 vertices at the billboard's position
-                Particles[i + 0] = new VertexPositionTexture(position,
-                    new Vector2(0, 0));
-                Particles[i + 1] = new VertexPositionTexture(position,
-                    new Vector2(0, 1));
-                Particles[i + 2] = new VertexPositionTexture(position,
-                    new Vector2(1, 1));
-                Particles[i + 3] = new VertexPositionTexture(position,
-                    new Vector2(1, 0));
-                // Add 6 indices to form two triangles
-                _indices[x++] = i + 0;
-                _indices[x++] = i + 3;
-                _indices[x++] = i + 2;
-                _indices[x++] = i + 2;
-                _indices[x++] = i + 1;
-                _indices[x++] = i + 0;
-            }
-
-            // Create and set the vertex buffer
-            VertexBuffer = new VertexBuffer(GraphicsDevice,
-                typeof(VertexPositionTexture),
-                4, BufferUsage.WriteOnly);
-            VertexBuffer.SetData<VertexPositionTexture>(Particles);
-            // Create and set the index buffer
-            IndexBuffer = new IndexBuffer(GraphicsDevice,
-                IndexElementSize.ThirtyTwoBits,
-                6, BufferUsage.WriteOnly);
-            IndexBuffer.SetData(_indices);
-        }
-
-        private void SetEffectParameters(Matrix view, Matrix projection, Vector3 up,
-            Vector3 right)
-        {
-            Effect.Parameters["ParticleTexture"].SetValue(Texture);
-            Effect.Parameters["View"].SetValue(view);
-            Effect.Parameters["Projection"].SetValue(projection);
-            Effect.Parameters["Size"].SetValue(BillboardSize / 2f);
-            Effect.Parameters["Up"].SetValue(Mode == BillboardMode.Spherical ? up : Vector3.Up);
-            Effect.Parameters["Side"].SetValue(right);
-            Effect.CurrentTechnique.Passes[0].Apply();
-        }
-
+        
         private void DrawOpaquePixels(RenderContext renderContext)
         {
             renderContext.GraphicsDevice.DepthStencilState = DepthStencilState.Default;
@@ -176,19 +114,21 @@ namespace SeaCollector.Entities
         private void DrawBillboards(RenderContext renderContext)
         {
             Effect.CurrentTechnique.Passes[0].Apply();
-#pragma warning disable CS0618
-            renderContext.GraphicsDevice.DrawInstancedPrimitives(PrimitiveType.TriangleList, 0, 0, 4, 0, 2,
-#pragma warning restore CS0618
-                InstanceCount);
+            renderContext.GraphicsDevice.DrawInstancedPrimitives(PrimitiveType.TriangleList, 0, 0, GameMesh.VertexBuffer.VertexCount, 0, GameMesh.VertexBuffer.VertexCount / 3, InstanceCount);
         }
 
         public override void Draw(RenderContext renderContext)
         {
             // Set the vertex and index buffer to the graphics card
             renderContext.GraphicsDevice.SetVertexBuffers(Bindings);
-            renderContext.GraphicsDevice.Indices = IndexBuffer;
+            renderContext.GraphicsDevice.Indices = GameMesh.IndexBuffer;
             renderContext.GraphicsDevice.BlendState = BlendState.AlphaBlend;
-            SetEffectParameters(renderContext.Camera.View, renderContext.Camera.Projection, renderContext.Camera.Up, Vector3.Cross(renderContext.Camera.Forward, Vector3.Up));
+            //SetEffectParameters(renderContext.Camera.View, renderContext.Camera.Projection, renderContext.Camera.Up, Vector3.Cross(renderContext.Camera.Forward, Vector3.Up));
+            Effect.Parameters["Texture00"]?.SetValue(Texture2D);
+            Effect.Parameters["World"]?.SetValue(WorldMatrix);
+            Effect.Parameters["View"]?.SetValue(renderContext.Camera.View);
+            Effect.Parameters["Projection"]?.SetValue(renderContext.Camera.Projection);
+            
             if (EnsureOcclusion)
             {
                 DrawOpaquePixels(renderContext);
@@ -208,16 +148,6 @@ namespace SeaCollector.Entities
             renderContext.GraphicsDevice.SetVertexBuffer(null);
             renderContext.GraphicsDevice.Indices = null;
             base.Draw(renderContext);
-        }
-
-        public void Dispose()
-        {
-            if (Instances != null) Array.Clear(Instances, 0, Instances.Length);
-            if (Particles != null) Array.Clear(Particles, 0, Particles.Length);
-            if (Bindings != null) Array.Clear(Bindings, 0, Bindings.Length);
-            if (_indices != null) Array.Clear(_indices, 0, _indices.Length);
-            VertexBuffer.Dispose();
-            IndexBuffer.Dispose();
         }
     }
 }

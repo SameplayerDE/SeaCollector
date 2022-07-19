@@ -45,7 +45,10 @@ InstancingVSoutput InstancingVS(InstancingVSinput input, float4 instanceTransfor
 
 float4 InstancingPS(InstancingVSoutput input) : COLOR0
 {
-    return tex2D(TextureSampler, input.TexCoord);
+    float4 color = tex2D(Sampler00, input.TextureCoordinate);
+    if (AlphaTest) {
+        clip((color.a - AlphaTestValue) * (AlphaTestGreater ? 1 : -1));
+    }
 }
 
 technique Instancing

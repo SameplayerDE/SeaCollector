@@ -10,7 +10,8 @@ namespace SeaCollector.Scenes
 {
     public class DemoScene : GameScene
     {
-        private BillboardSystem _forest;
+        private BillboardSystem _stones;
+        private GameMeshInstanceSystem _forest;
         private Hero _hero;
         private FixedPerspectiveCamera _camera;
 
@@ -40,8 +41,10 @@ namespace SeaCollector.Scenes
             _test = new GameMeshObject("Models/Hulls/sp_hul01", "Effects/TextureCellShader", "Content/Models/Hulls/hull_0.obj");
             _test.Scale(Vector3.One * 7f);
             
-            _forest = new BillboardSystem(Game.GraphicsDevice, Vector2.One * 3f, "Textures/tree");
-            _forest.Mode = BillboardMode.Spherical;
+            _forest = new GameMeshInstanceSystem(Game.GraphicsDevice, "Textures/tree_diffuse", "Content/Models/tree.obj");
+            _forest.EnsureOcclusion = true;
+
+            _stones = new BillboardSystem(Game.GraphicsDevice, Vector2.One, "Textures/stone");
 
             _sprite3D0 = new GameSprite3D(Game.GraphicsDevice, Vector2.One * 10f, "Textures/tree");
             _sprite3D0.Translate(10, 0.5f * 10f, 10);
@@ -79,10 +82,13 @@ namespace SeaCollector.Scenes
             AddSceneObject(_hero);
             
             AddSceneObject(_rotationObject3D);
-            AddSceneObject(_forest);
+            
             AddSceneObject(_cameraParent);
+            AddSceneObject(_forest);
+            AddSceneObject(_stones);
+            
             AddSceneObject(_ground);
-
+           
             //AddSceneObject(_position);
             //AddSceneObject(_rotation);
 

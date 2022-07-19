@@ -28,7 +28,7 @@ namespace SeaCollector.Entities
         {
             var direction = new Vector3();
             var mouseDelta = HxInput.Input.Instance.LatestMouseDelta;
-
+            
             if (HxInput.Input.Instance.IsKeyboardKeyDown(Keys.W))
             {
                 direction += Vector3.Forward;
