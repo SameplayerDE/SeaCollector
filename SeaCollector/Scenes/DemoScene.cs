@@ -21,6 +21,8 @@ namespace SeaCollector.Scenes
         private GameSprite3D _sprite3D0;
         private GameSprite3D _sprite3D1;
         
+        private BillboardObject _billboardObject;
+        
         private GameSprite3D _ground;
         private GameObject3D _cameraParent;
 
@@ -51,13 +53,16 @@ namespace SeaCollector.Scenes
             _sprite3D1 = new GameSprite3D(Game.GraphicsDevice, Vector2.One * 10f, "Textures/tree");
             _sprite3D1.Rotate(0, MathHelper.ToRadians(90), 0);
             
+            _billboardObject = new BillboardObject(Game.GraphicsDevice, Vector2.One, "Textures/stone");
+            _billboardObject.Translate(0, 2, 0);
+            
             _ground = new GameSprite3D(Game.GraphicsDevice, Vector2.One * 1000f, "Textures/gras");
             _ground.Rotate(MathHelper.ToRadians(90f), 0, 0);
             _ground.EnsureOcclusion = false;
             _ground.Tiling = new Vector2(1000f, 1000f);
             
             _camera = new FixedPerspectiveCamera(Game.GraphicsDevice);
-            _camera.Translate(new Vector3(0, 5, 5));
+            _camera.Translate(new Vector3(0, 3, 3));
             _camera.Rotate(MathHelper.ToRadians(-45f), 0, 0);
 
             _hero = new Hero();
@@ -65,7 +70,7 @@ namespace SeaCollector.Scenes
             _hero.Scale(Vector3.One * 1f);
             
             _cameraParent.FixedRotation = true;
-
+            
             _position = new GameSpriteFont("Fonts/Default");
             _rotation = new GameSpriteFont("Fonts/Default");
 
@@ -78,6 +83,7 @@ namespace SeaCollector.Scenes
             
             _cameraParent.AddChild(_camera);
             _hero.AddChild(_cameraParent);
+            //_hero.AddChild(_sprite3D2);
             
             AddSceneObject(_hero);
             
@@ -85,7 +91,7 @@ namespace SeaCollector.Scenes
             
             AddSceneObject(_cameraParent);
             AddSceneObject(_forest);
-            AddSceneObject(_stones);
+            AddSceneObject(_billboardObject);
             
             AddSceneObject(_ground);
            

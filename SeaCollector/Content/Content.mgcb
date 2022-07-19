@@ -19,6 +19,12 @@
 /processorParam:DebugMode=Auto
 /build:Effects/BasicSpriteShader.fx
 
+#begin Effects/BasicBillboardShader.fx
+/importer:EffectImporter
+/processor:EffectProcessor
+/processorParam:DebugMode=Auto
+/build:Effects/BasicBillboardShader.fx
+
 #begin Effects/BillboardShader.fx
 /importer:EffectImporter
 /processor:EffectProcessor
