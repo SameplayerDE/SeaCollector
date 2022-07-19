@@ -7,7 +7,7 @@ using Microsoft.Xna.Framework.Graphics;
 
 namespace SeaCollector.Framework
 {
-    public abstract class GameObject3D : GameObject
+    public class GameObject3D : GameObject
     {
         public Vector3 LocalPosition;
         public Vector3 WorldPosition;
@@ -21,6 +21,7 @@ namespace SeaCollector.Framework
         public bool FixedRotationY = false;
         public bool FixedRotationX = false;
         public bool FixedRotationZ = false;
+        public bool FixedRotation = false;
         
         public GameObject3D Parent;
         public List<GameObject3D> Children;
@@ -39,8 +40,9 @@ namespace SeaCollector.Framework
 
             set { _scene = value; }
         }
-
-        protected GameObject3D()
+        
+        
+        public GameObject3D()
         {
             Children = new List<GameObject3D>();
             LocalScale = WorldScale = Vector3.One;
@@ -137,9 +139,9 @@ namespace SeaCollector.Framework
             
             if (Parent != null)
             {
-                WorldMatrix = Matrix.Multiply(WorldMatrix, Parent.WorldMatrix);
+                var matrix = Matrix.Multiply(WorldMatrix, Parent.WorldMatrix);
                 
-                if (!WorldMatrix.Decompose(out var scale, out var rotation, out var position))
+                if (!matrix.Decompose(out var scale, out var rotation, out var position))
                     Debug.WriteLine("Object3D Decompose World Matrix FAILED!");
 
                 var pRotation =
@@ -150,7 +152,7 @@ namespace SeaCollector.Framework
                 if (FixedRotationX)
                 {
                     var quaternion = rotation;
-                    quaternion.X = 0;
+                    quaternion.X = LocalRotation.X;
                     quaternion.Normalize();
                     rotation = quaternion;
                 }
@@ -158,7 +160,7 @@ namespace SeaCollector.Framework
                 if (FixedRotationY)
                 {
                     var quaternion = rotation;
-                    quaternion.Y = 0;
+                    quaternion.Y = LocalRotation.Y;
                     quaternion.Normalize();
                     rotation = quaternion;
                 }
@@ -166,14 +168,29 @@ namespace SeaCollector.Framework
                 if (FixedRotationZ)
                 {
                     var quaternion = rotation;
-                    quaternion.Z = 0;
+                    quaternion.Z = LocalRotation.Z;
                     quaternion.Normalize();
                     rotation = quaternion;
                 }
                 
-                WorldPosition = position;
-                WorldScale = scale;
-                WorldRotation = rotation;
+                if (FixedRotation)
+                {
+                    WorldMatrix = Matrix.CreateFromQuaternion(LocalRotation) *
+                                  Matrix.CreateScale(scale) *
+                                  Matrix.CreateTranslation(position);
+                    WorldPosition = position;
+                    WorldScale = scale;
+                    WorldRotation = LocalRotation;
+                }
+                else
+                {
+                    WorldPosition = position;
+                    WorldScale = scale;
+                    WorldRotation = rotation;
+                    WorldMatrix = matrix;
+                }
+                
+                
             }
             else
             {

@@ -21,6 +21,7 @@ namespace SeaCollector.Scenes
         private GameSprite3D _sprite3D1;
         
         private GameSprite3D _ground;
+        private GameObject3D _cameraParent;
 
         private GameMeshObject _test;
         private RotationObject3D _rotationObject3D;
@@ -31,6 +32,8 @@ namespace SeaCollector.Scenes
 
         public override void Initialize()
         {
+            _cameraParent = new GameObject3D();
+            
             _rotationObject3D = new RotationObject3D();
             _rotationObject3D.SpeedY = 1.5f;
             
@@ -38,7 +41,7 @@ namespace SeaCollector.Scenes
             _test.Scale(Vector3.One * 7f);
             
             _forest = new BillboardSystem(Game.GraphicsDevice, Vector2.One * 3f, "Textures/tree");
-            _forest.Mode = BillboardMode.Cylindrical;
+            _forest.Mode = BillboardMode.Spherical;
 
             _sprite3D0 = new GameSprite3D(Game.GraphicsDevice, Vector2.One * 10f, "Textures/tree");
             _sprite3D0.Translate(10, 0.5f * 10f, 10);
@@ -56,9 +59,9 @@ namespace SeaCollector.Scenes
 
             _hero = new Hero();
             _hero.Translate(0.0f, 0.0f, 0f);
-            _hero.Scale(Vector3.One * 1f); 
-
-            _hero.AddChild(_camera);
+            _hero.Scale(Vector3.One * 1f);
+            
+            _cameraParent.FixedRotation = true;
 
             _position = new GameSpriteFont("Fonts/Default");
             _rotation = new GameSpriteFont("Fonts/Default");
@@ -70,11 +73,15 @@ namespace SeaCollector.Scenes
             _sprite3D0.AddChild(_sprite3D1);
             AddSceneObject(_sprite3D0);
             
+            _cameraParent.AddChild(_camera);
+            _hero.AddChild(_cameraParent);
+            
             AddSceneObject(_hero);
+            
             AddSceneObject(_rotationObject3D);
             AddSceneObject(_forest);
+            AddSceneObject(_cameraParent);
             AddSceneObject(_ground);
-            
 
             //AddSceneObject(_position);
             //AddSceneObject(_rotation);
@@ -88,12 +95,12 @@ namespace SeaCollector.Scenes
         {
             base.Update(gameTime);
             var (tx, ty, tz) = _hero.WorldPosition;
-            var (rx, ry, rz, rw) = _hero.WorldRotation;
-            
+            var (rx, ry, rz, rw) = _cameraParent.WorldRotation;
             //_position.Text = $"Position:\nX: {tx}\nY: {ty}\nZ: {tz}\n";
             //_rotation.Text = $"Rotation:\nX: {rx}\nY: {ry}\nZ: {rz}\nW: {rw}";
 
             //_rotation.LocalPosition.Y = _position.Height;
+            //_cameraParent.LocalPosition = _hero.LocalPosition;
         }
     }
 }
