@@ -22,7 +22,7 @@ namespace SeaCollector.Scenes
         private GameSprite3D _sprite3D0;
         private GameSprite3D _sprite3D1;
         
-        private BillboardObject _billboardObject;
+        private ThrowableObject _billboardObject;
         
         private GameSprite3D _ground;
         private GameObject3D _cameraParent;
@@ -56,12 +56,12 @@ namespace SeaCollector.Scenes
             _sprite3D1 = new GameSprite3D(Game.GraphicsDevice, Vector2.One * 10f, "Textures/tree");
             _sprite3D1.Rotate(0, MathHelper.ToRadians(90), 0);
             
-            _billboardObject = new BillboardObject(Game.GraphicsDevice, Vector2.One * 0.7f, "Textures/stone");
+            _billboardObject = new ThrowableObject(Game.GraphicsDevice, Vector2.One * 0.7f, "Textures/stone");
             _billboardObject.Translate(10, 0f, 0f);
             
             _ground = new GameSprite3D(Game.GraphicsDevice, Vector2.One * 1000f, "Textures/gras");
             _ground.Rotate(MathHelper.ToRadians(90f), 0, 0);
-            _ground.EnsureOcclusion = false;
+            _ground.EnsureOcclusion = true;
             _ground.Tiling = new Vector2(1000f, 1000f);
             
             _camera = new FixedPerspectiveCamera(Game.GraphicsDevice);
@@ -124,15 +124,24 @@ namespace SeaCollector.Scenes
             {
                 RemoveSceneObject(_billboardObject);
                 _cameraParent.AddChild(_billboardObject);
-                _billboardObject.Translate(0, 1.25f, 0.5f);
+                _billboardObject.Translate(0, 1.1f, 0);
                 _onHead = true;
+                _billboardObject.Held = true;
+                _billboardObject.OnGround = false;
             }
             else if (_onHead && HxInput.Input.Instance.IsKeyboardKeyDownOnce(Keys.Space))
             {
                 AddSceneObject(_billboardObject);
                 _cameraParent.RemoveChild(_billboardObject);
-                _billboardObject.Translate(_hero.WorldPosition);// + Vector3.Transform(Vector3.Forward, _hero.WorldRotation));
+
+                var newPos = _billboardObject.LocalPosition + _hero.WorldPosition;
+                
+                _billboardObject.Translate(newPos);
+                _billboardObject.Direction = Vector3.Transform(Vector3.Forward, _hero.WorldRotation);
+                _billboardObject.Direction.Y = 1;
                 _onHead = false;
+                _billboardObject.Held = false;
+                _billboardObject.InAir = true;
             }
         }
     }
