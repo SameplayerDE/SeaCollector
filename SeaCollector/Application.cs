@@ -61,6 +61,7 @@ namespace SeaCollector
 
             GameSceneManager.Instance.RenderContext.GraphicsDevice = GraphicsDevice;
             GameSceneManager.Instance.Add(new MainMenu(this));
+            GameSceneManager.Instance.Add(new OptionsMenu(this));
             GameSceneManager.Instance.Add(new DemoScene(this));
             GameSceneManager.Instance.Initialize();
             
@@ -168,6 +169,11 @@ namespace SeaCollector
         {
             HxInput.Input.Instance.Update(gameTime);
             Time.Instance.Update(gameTime);
+
+            if (!IsActive)
+            {
+                return;
+            }
             
             if (HxInput.Input.Instance.IsKeyboardKeyDownOnce(Keys.Escape))
             {

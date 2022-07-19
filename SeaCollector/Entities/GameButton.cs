@@ -41,7 +41,7 @@ namespace SeaCollector.Entities
                 
                 if (_rectangleCollider2D.Contains(Mouse.GetState().Position))
                 {
-                    if (HxInput.Input.Instance.IsMouseKeyDown(MouseButton.Left))
+                    if (HxInput.Input.Instance.IsMouseKeyDownOnce(MouseButton.Left))
                     {
                         OnClick();
                     }
