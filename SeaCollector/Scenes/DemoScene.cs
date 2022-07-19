@@ -2,6 +2,7 @@ using System;
 using HxTime;
 using Microsoft.Xna.Framework;
 using Microsoft.Xna.Framework.Graphics;
+using Microsoft.Xna.Framework.Input;
 using SeaCollector.Entities;
 using SeaCollector.Framework;
 using SeaCollector.Rendering.Cameras;
@@ -29,6 +30,8 @@ namespace SeaCollector.Scenes
         private GameMeshObject _test;
         private RotationObject3D _rotationObject3D;
 
+        private bool _onHead;
+
         public DemoScene(Game game) : base("demo", game)
         {
         }
@@ -54,7 +57,7 @@ namespace SeaCollector.Scenes
             _sprite3D1.Rotate(0, MathHelper.ToRadians(90), 0);
             
             _billboardObject = new BillboardObject(Game.GraphicsDevice, Vector2.One * 0.7f, "Textures/stone");
-            _billboardObject.Translate(0, 1, 0);
+            _billboardObject.Translate(10, 0f, 0f);
             
             _ground = new GameSprite3D(Game.GraphicsDevice, Vector2.One * 1000f, "Textures/gras");
             _ground.Rotate(MathHelper.ToRadians(90f), 0, 0);
@@ -82,8 +85,9 @@ namespace SeaCollector.Scenes
             AddSceneObject(_sprite3D0);
             
             _cameraParent.AddChild(_camera);
+           // _cameraParent.AddChild(_billboardObject);
             _hero.AddChild(_cameraParent);
-            _hero.AddChild(_billboardObject);
+            //_hero.AddChild(_billboardObject);
             
             AddSceneObject(_hero);
             
@@ -91,7 +95,7 @@ namespace SeaCollector.Scenes
             
             AddSceneObject(_cameraParent);
             AddSceneObject(_forest);
-            //AddSceneObject(_billboardObject);
+            AddSceneObject(_billboardObject);
             
             AddSceneObject(_ground);
            
@@ -113,6 +117,23 @@ namespace SeaCollector.Scenes
 
             //_rotation.LocalPosition.Y = _position.Height;
             //_cameraParent.LocalPosition = _hero.LocalPosition;
+
+            var distance = Vector3.Distance(_hero.WorldPosition, _billboardObject.WorldPosition);
+
+            if (distance < .5f && !_onHead && HxInput.Input.Instance.IsKeyboardKeyDownOnce(Keys.Space))
+            {
+                RemoveSceneObject(_billboardObject);
+                _cameraParent.AddChild(_billboardObject);
+                _billboardObject.Translate(0, 1.25f, 0.5f);
+                _onHead = true;
+            }
+            else if (_onHead && HxInput.Input.Instance.IsKeyboardKeyDownOnce(Keys.Space))
+            {
+                AddSceneObject(_billboardObject);
+                _cameraParent.RemoveChild(_billboardObject);
+                _billboardObject.Translate(_hero.WorldPosition);// + Vector3.Transform(Vector3.Forward, _hero.WorldRotation));
+                _onHead = false;
+            }
         }
     }
 }

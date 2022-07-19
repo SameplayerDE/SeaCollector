@@ -38,7 +38,7 @@ namespace SeaCollector
             IsFixedTimeStep = true;
             TargetElapsedTime = TimeSpan.FromSeconds(1d / 60d);
 
-            _preferedScreenSize = new Point(256 * 2, 192 * 2);
+            _preferedScreenSize = new Point(256 * 1, 192 * 1);
         }
 
         protected override void Initialize()
