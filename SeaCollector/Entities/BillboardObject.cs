@@ -29,16 +29,8 @@ namespace SeaCollector.Entities
 
         public string TextureFile;
         public string EffectFile = "Effects/BasicBillboardShader";
-        public float Depth;
         public Color Color;
-        public Vector2 Tiling = Vector2.One;
-        public TextureAddressMode U = TextureAddressMode.Wrap;
-        public TextureAddressMode V = TextureAddressMode.Wrap;
 
-        public float Width => (float)Texture2D.Width;
-        public float Height => (float)Texture2D.Height;
-        
-        
         public BillboardObject(GraphicsDevice graphicsDevice, Vector2 size, string textureFile)
         {
             Size = size;
@@ -73,11 +65,11 @@ namespace SeaCollector.Entities
                 // Add 4 vertices at the billboard's position
                 Particles[i + 0] = new VertexPositionColorTexture(position, Color,
                     new Vector2(0, 0));
-                Particles[i + 1] = new VertexPositionColorTexture(position,Color,
+                Particles[i + 1] = new VertexPositionColorTexture(position, Color,
                     new Vector2(0, 1));
-                Particles[i + 2] = new VertexPositionColorTexture(position,Color,
+                Particles[i + 2] = new VertexPositionColorTexture(position, Color,
                     new Vector2(1, 1));
-                Particles[i + 3] = new VertexPositionColorTexture(position,Color,
+                Particles[i + 3] = new VertexPositionColorTexture(position, Color,
                     new Vector2(1, 0));
                 // Add 6 indices to form two triangles
                 _indices[x++] = i + 0;
@@ -100,32 +92,19 @@ namespace SeaCollector.Entities
             IndexBuffer.SetData(_indices);
         }
 
-        private void SetEffectParameters(Matrix view, Matrix projection, Vector3 up,
-            Vector3 right)
-        {
-            Effect.Parameters["Texture00"]?.SetValue(Texture2D);
-            Effect.Parameters["World"].SetValue(WorldMatrix);
-            Effect.Parameters["View"].SetValue(view);
-            Effect.Parameters["Projection"].SetValue(projection);
-            Effect.Parameters["Size"].SetValue(Size / 2f);
-            Effect.Parameters["Up"].SetValue(Mode == BillboardMode.Spherical ? up : Vector3.Up);
-            Effect.Parameters["Side"].SetValue(right);
-            Effect.CurrentTechnique.Passes[0].Apply();
-        }
-
         private void DrawOpaquePixels(RenderContext renderContext)
         {
             renderContext.GraphicsDevice.DepthStencilState = DepthStencilState.Default;
-            Effect.Parameters["AlphaTest"].SetValue(true);
-            Effect.Parameters["AlphaTestGreater"].SetValue(true);
+            Effect.Parameters["AlphaTest"]?.SetValue(true);
+            Effect.Parameters["AlphaTestGreater"]?.SetValue(true);
             DrawSprite(renderContext);
         }
 
         private void DrawTransparentPixels(RenderContext renderContext)
         {
             renderContext.GraphicsDevice.DepthStencilState = DepthStencilState.DepthRead;
-            Effect.Parameters["AlphaTest"].SetValue(true);
-            Effect.Parameters["AlphaTestGreater"].SetValue(false);
+            Effect.Parameters["AlphaTest"]?.SetValue(true);
+            Effect.Parameters["AlphaTestGreater"]?.SetValue(false);
             DrawSprite(renderContext);
         }
 
@@ -141,7 +120,16 @@ namespace SeaCollector.Entities
             renderContext.GraphicsDevice.SetVertexBuffer(VertexBuffer);
             renderContext.GraphicsDevice.Indices = IndexBuffer;
             renderContext.GraphicsDevice.BlendState = BlendState.AlphaBlend;
-            SetEffectParameters(renderContext.Camera.View, renderContext.Camera.Projection, renderContext.Camera.Up, Vector3.Cross(renderContext.Camera.Forward, Vector3.Up));
+            
+            Effect.Parameters["Texture00"]?.SetValue(Texture2D);
+            Effect.Parameters["World"]?.SetValue(WorldMatrix);
+            Effect.Parameters["View"]?.SetValue(renderContext.Camera.View);
+            Effect.Parameters["Projection"]?.SetValue(renderContext.Camera.Projection);
+            
+            Effect.Parameters["Size"]?.SetValue(Size / 2f);
+            Effect.Parameters["Up"]?.SetValue(Mode == BillboardMode.Spherical ? renderContext.Camera.Up : Vector3.Up);
+            Effect.Parameters["Side"]?.SetValue(Vector3.Cross(renderContext.Camera.Forward, Vector3.Up));
+            
             if (EnsureOcclusion)
             {
                 DrawOpaquePixels(renderContext);
@@ -150,7 +138,7 @@ namespace SeaCollector.Entities
             else
             {
                 renderContext.GraphicsDevice.DepthStencilState = DepthStencilState.DepthRead;
-                Effect.Parameters["AlphaTest"].SetValue(false);
+                Effect.Parameters["AlphaTest"]?.SetValue(false);
                 DrawSprite(renderContext);
             }
 
@@ -161,12 +149,6 @@ namespace SeaCollector.Entities
             renderContext.GraphicsDevice.SetVertexBuffer(null);
             renderContext.GraphicsDevice.Indices = null;
             base.Draw(renderContext);
-        }
-
-        public void Dispose()
-        {
-            VertexBuffer.Dispose();
-            IndexBuffer.Dispose();
         }
     }
 }

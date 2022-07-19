@@ -53,8 +53,8 @@ namespace SeaCollector.Scenes
             _sprite3D1 = new GameSprite3D(Game.GraphicsDevice, Vector2.One * 10f, "Textures/tree");
             _sprite3D1.Rotate(0, MathHelper.ToRadians(90), 0);
             
-            _billboardObject = new BillboardObject(Game.GraphicsDevice, Vector2.One, "Textures/stone");
-            _billboardObject.Translate(0, 2, 0);
+            _billboardObject = new BillboardObject(Game.GraphicsDevice, Vector2.One * 0.7f, "Textures/stone");
+            _billboardObject.Translate(0, 1, 0);
             
             _ground = new GameSprite3D(Game.GraphicsDevice, Vector2.One * 1000f, "Textures/gras");
             _ground.Rotate(MathHelper.ToRadians(90f), 0, 0);
@@ -83,15 +83,15 @@ namespace SeaCollector.Scenes
             
             _cameraParent.AddChild(_camera);
             _hero.AddChild(_cameraParent);
-            //_hero.AddChild(_sprite3D2);
+            _hero.AddChild(_billboardObject);
             
             AddSceneObject(_hero);
             
-            AddSceneObject(_rotationObject3D);
+            //AddSceneObject(_rotationObject3D);
             
             AddSceneObject(_cameraParent);
             AddSceneObject(_forest);
-            AddSceneObject(_billboardObject);
+            //AddSceneObject(_billboardObject);
             
             AddSceneObject(_ground);
            

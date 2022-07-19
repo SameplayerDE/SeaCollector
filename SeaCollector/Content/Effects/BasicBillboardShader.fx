@@ -15,9 +15,11 @@ bool AlphaTest = true;
 bool AlphaTestGreater = true;
 float AlphaTestValue = 0.5f;
 
+
 float2 Size;
 float3 Up; // Camera's 'up' vector
 float3 Side; // Camera's 'side' vector
+
 
 Texture2D Texture00 : register(t0);
 sampler Sampler00 : register(s0)
@@ -44,28 +46,30 @@ struct VertexShaderOutput
 	float2 TextureCoordinate : TEXCOORD1;
 };
 
-VertexShaderOutput VertexShaderFunction(VertexShaderInput input, float4 instanceTransform : POSITION1)
+
+
+VertexShaderOutput MainVS(VertexShaderInput input)
 {
     VertexShaderOutput output = (VertexShaderOutput)0;
     
     float4 position = input.Position;
     float4 color = input.Color;
     float2 textureCoordinate = input.TextureCoordinate;
-
+    
     float4 worldPosition = mul(position, World);
     float4 viewPosition = mul(worldPosition, View);
     
     float2 offset = float2((input.TextureCoordinate.x - 0.5f) * 2.0f, -(input.TextureCoordinate.y - 1.0f) * 2.0f);
     // Move the vertex along the camera's 'plane' to its corner
-    position.xyz += offset.x * Size.x * Side + offset.y * Size.y * Up;
-    // Transform the position by view and projection
-    output.Position = mul(viewPosition, Projection);
+    worldPosition.xyz += offset.x * Size.x * Side + offset.y * Size.y * Up;
+    
+    output.Position = mul(worldPosition, mul(View, Projection));
     output.Color = color;
     output.TextureCoordinate = textureCoordinate;
     return output;
 }
 
-float4 PixelShaderFunction(VertexShaderOutput input) : COLOR0
+float4 MainPS(VertexShaderOutput input) : COLOR0
 {
 	float4 color = tex2D(Sampler00, input.TextureCoordinate) * input.Color;
 	if (AlphaTest) {
@@ -74,12 +78,11 @@ float4 PixelShaderFunction(VertexShaderOutput input) : COLOR0
     return color;
 }
 
-technique Technique1
+technique BasicColorDrawing
 {
-    pass Pass1
-    {
-        VertexShader = compile VS_SHADERMODEL VertexShaderFunction();
-        PixelShader = compile PS_SHADERMODEL PixelShaderFunction();
-        //FillMode = WireFrame;
-    }
-}
+	pass P0
+	{
+		VertexShader = compile VS_SHADERMODEL MainVS();
+		PixelShader = compile PS_SHADERMODEL MainPS();
+	}
+};
