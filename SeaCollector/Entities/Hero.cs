@@ -12,7 +12,11 @@ namespace SeaCollector.Entities
 {
     public class Hero : GameObject3D
     {
+        
+        public GameMeshObject Character;
+        public GameMeshObject Topper;
         public GameMeshObject GameMeshObject;
+        
         public SoundEffectInstanceObject3D SoundEffectInstanceObject3D;
 
         public float _rotationX = 0f;
@@ -21,9 +25,9 @@ namespace SeaCollector.Entities
 
         public override void Initialize()
         {
-            GameMeshObject = new GameMeshObject("Textures/Link/main_red", "Effects/TextureCellShader","Content/Models/link.obj");
-            GameMeshObject.Scale(0.8f, 0.8f, 0.8f);
-            AddChild(GameMeshObject);
+            Character = new GameMeshObject("Textures/Link/main_red", "Effects/TextureCellShader","Content/Models/link.obj");
+            Character.Scale(0.8f, 0.8f, 0.8f);
+            AddChild(Character);
 
             SoundEffectInstanceObject3D = new SoundEffectInstanceObject3D();
             SoundEffectInstanceObject3D.SoundEffectFile = "Sounds/collect";

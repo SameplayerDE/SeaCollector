@@ -10,6 +10,7 @@ using SharpDX;
 using BoundingSphere = Microsoft.Xna.Framework.BoundingSphere;
 using Color = Microsoft.Xna.Framework.Color;
 using Matrix = Microsoft.Xna.Framework.Matrix;
+using Point = Microsoft.Xna.Framework.Point;
 using Vector2 = Microsoft.Xna.Framework.Vector2;
 using Vector3 = Microsoft.Xna.Framework.Vector3;
 using Viewport = Microsoft.Xna.Framework.Graphics.Viewport;
@@ -25,6 +26,8 @@ namespace SeaCollector.Scenes
 
         private GameSpriteFont _position;
         private GameSpriteFont _rotation;
+
+        private AnimatedGameSprite3D _animated;
 
         private GameSprite3D _sprite3D0;
         private GameSprite3D _sprite3D1;
@@ -64,6 +67,8 @@ namespace SeaCollector.Scenes
 
             _stones = new BillboardSystem(Game.GraphicsDevice, Vector2.One, "Textures/stone");
 
+            _animated = new AnimatedGameSprite3D(Game.GraphicsDevice, Vector2.One, "Textures/waves", new Point(10, 10));
+            
             _sprite3D0 = new GameSprite3D(Game.GraphicsDevice, Vector2.One * 10f, "Textures/tree");
             _sprite3D0.Translate(10, 0.5f * 10f, 10);
             _sprite3D1 = new GameSprite3D(Game.GraphicsDevice, Vector2.One * 10f, "Textures/tree");
@@ -105,15 +110,18 @@ namespace SeaCollector.Scenes
 
             _sprite3D0.AddChild(_sprite3D1);
             AddSceneObject(_sprite3D0);
+            AddSceneObject(_animated);
 
             _cameraParent.AddChild(_camera);
             // _cameraParent.AddChild(_billboardObject);
             _hero.AddChild(_cameraParent);
+            _animated.Translate(0, 2f, 0f);
+            _hero.AddChild(_animated);
             //_hero.AddChild(_billboardObject);
 
             AddSceneObject(_hero);
 
-            AddSceneObject(_rotationObject3D);
+            //AddSceneObject(_rotationObject3D);
 
             AddSceneObject(_cameraParent);
             AddSceneObject(_forest);
@@ -130,6 +138,7 @@ namespace SeaCollector.Scenes
 
         public override void Update(GameTime gameTime)
         {
+            _animated.Cell.X = gameTime.TotalGameTime.Seconds;
             base.Update(gameTime);
             //var (tx, ty, tz) = _hero.WorldPosition;
             //var (rx, ry, rz, rw) = _cameraParent.WorldRotation;
@@ -140,7 +149,7 @@ namespace SeaCollector.Scenes
             //_cameraParent.LocalPosition = _hero.LocalPosition;
 
 
-            Vector2 mouseLocation = new Vector2(Mouse.GetState().X, Mouse.GetState().Y);
+            /*Vector2 mouseLocation = new Vector2(Mouse.GetState().X, Mouse.GetState().Y);
             Viewport viewport = Game.GraphicsDevice.Viewport;
 
             float distance = _camera.FarPlane;
