@@ -16,7 +16,7 @@ namespace SeaCollector.Entities
         public VertexBuffer VertexBuffer; //VertexBuffer
         public IndexBuffer IndexBuffer; //IndexBuffer
 
-        public VertexPositionColorTexture[] Particles;
+        public VertexPositionTexture[] Particles;
 
         private int[] _indices;
 
@@ -55,7 +55,7 @@ namespace SeaCollector.Entities
         private void GenerateGeometry()
         {
             // Create vertex and index arrays
-            Particles = new VertexPositionColorTexture[4];
+            Particles = new VertexPositionTexture[4];
             _indices = new int[6];
             var x = 0;
             // For each billboard...
@@ -63,13 +63,13 @@ namespace SeaCollector.Entities
             {
                 var position = Vector3.Zero;
                 // Add 4 vertices at the billboard's position
-                Particles[i + 0] = new VertexPositionColorTexture(position, Color,
+                Particles[i + 0] = new VertexPositionTexture(position,
                     new Vector2(0, 0));
-                Particles[i + 1] = new VertexPositionColorTexture(position, Color,
+                Particles[i + 1] = new VertexPositionTexture(position,
                     new Vector2(0, 1));
-                Particles[i + 2] = new VertexPositionColorTexture(position, Color,
+                Particles[i + 2] = new VertexPositionTexture(position,
                     new Vector2(1, 1));
-                Particles[i + 3] = new VertexPositionColorTexture(position, Color,
+                Particles[i + 3] = new VertexPositionTexture(position,
                     new Vector2(1, 0));
                 // Add 6 indices to form two triangles
                 _indices[x++] = i + 0;
@@ -82,7 +82,7 @@ namespace SeaCollector.Entities
 
             // Create and set the vertex buffer
             VertexBuffer = new VertexBuffer(GraphicsDevice,
-                typeof(VertexPositionColorTexture),
+                typeof(VertexPositionTexture),
                 4, BufferUsage.WriteOnly);
             VertexBuffer.SetData(Particles);
             // Create and set the index buffer
@@ -125,6 +125,7 @@ namespace SeaCollector.Entities
             Effect.Parameters["World"]?.SetValue(WorldMatrix);
             Effect.Parameters["View"]?.SetValue(renderContext.Camera.View);
             Effect.Parameters["Projection"]?.SetValue(renderContext.Camera.Projection);
+            Effect.Parameters["Color"]?.SetValue(Color.ToVector4());
             
             Effect.Parameters["Size"]?.SetValue(Size / 2f);
             Effect.Parameters["Up"]?.SetValue(Mode == BillboardMode.Spherical ? renderContext.Camera.Up : Vector3.Up);

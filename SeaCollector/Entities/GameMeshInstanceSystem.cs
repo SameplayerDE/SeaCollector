@@ -28,7 +28,7 @@ namespace SeaCollector.Entities
         public int InstanceCount;
         
         public string TextureFile;
-        public string EffectFile = "Effects/InstanceTextureCellShader";
+        public string EffectFile = "Effects/InstanceTextureShader";
         public string GameMeshFile;
         
         public Texture2D Texture2D;

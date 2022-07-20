@@ -20,7 +20,7 @@ namespace SeaCollector.Framework
         public string PreviousKey;
         public string CurrentKey;
         public string NextKey;
-        
+
         static GameSceneManager()
         {
         }

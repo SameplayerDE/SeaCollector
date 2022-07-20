@@ -13,17 +13,17 @@
 
 #---------------------------------- Content ---------------------------------#
 
-#begin Effects/BasicSpriteShader.fx
-/importer:EffectImporter
-/processor:EffectProcessor
-/processorParam:DebugMode=Auto
-/build:Effects/BasicSpriteShader.fx
-
 #begin Effects/BasicBillboardShader.fx
 /importer:EffectImporter
 /processor:EffectProcessor
 /processorParam:DebugMode=Auto
 /build:Effects/BasicBillboardShader.fx
+
+#begin Effects/BasicSpriteShader.fx
+/importer:EffectImporter
+/processor:EffectProcessor
+/processorParam:DebugMode=Auto
+/build:Effects/BasicSpriteShader.fx
 
 #begin Effects/BillboardShader.fx
 /importer:EffectImporter
@@ -31,11 +31,23 @@
 /processorParam:DebugMode=Auto
 /build:Effects/BillboardShader.fx
 
+#begin Effects/BlurSpriteShader.fx
+/importer:EffectImporter
+/processor:EffectProcessor
+/processorParam:DebugMode=Auto
+/build:Effects/BlurSpriteShader.fx
+
 #begin Effects/DiffuseShader.fx
 /importer:EffectImporter
 /processor:EffectProcessor
 /processorParam:DebugMode=Auto
 /build:Effects/DiffuseShader.fx
+
+#begin Effects/InstanceDepthShader.fx
+/importer:EffectImporter
+/processor:EffectProcessor
+/processorParam:DebugMode=Auto
+/build:Effects/InstanceDepthShader.fx
 
 #begin Effects/InstanceShader.fx
 /importer:EffectImporter
@@ -48,6 +60,12 @@
 /processor:EffectProcessor
 /processorParam:DebugMode=Auto
 /build:Effects/InstanceTextureCellShader.fx
+
+#begin Effects/InstanceTextureShader.fx
+/importer:EffectImporter
+/processor:EffectProcessor
+/processorParam:DebugMode=Auto
+/build:Effects/InstanceTextureShader.fx
 
 #begin Effects/IslandShader.fx
 /importer:EffectImporter

@@ -19,7 +19,7 @@ float AlphaTestValue = 0.5f;
 float2 Size;
 float3 Up; // Camera's 'up' vector
 float3 Side; // Camera's 'side' vector
-
+float4 Color = float4(1, 1, 1, 1);
 
 Texture2D Texture00 : register(t0);
 sampler Sampler00 : register(s0)
@@ -35,7 +35,6 @@ sampler Sampler00 : register(s0)
 struct VertexShaderInput
 {
 	float4 Position : POSITION0;
-	float4 Color : COLOR0;
 	float2 TextureCoordinate : TEXCOORD0;
 };
 
@@ -53,7 +52,7 @@ VertexShaderOutput MainVS(VertexShaderInput input)
     VertexShaderOutput output = (VertexShaderOutput)0;
     
     float4 position = input.Position;
-    float4 color = input.Color;
+    float4 color = Color;
     float2 textureCoordinate = input.TextureCoordinate;
     
     float4 worldPosition = mul(position, World);

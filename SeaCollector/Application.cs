@@ -25,6 +25,8 @@ namespace SeaCollector
         public Rectangle RenderTargetRectangle;
         private Point _preferedScreenSize;
 
+        private Effect _blur;
+
 
         public Application()
         {
@@ -38,7 +40,7 @@ namespace SeaCollector
             IsFixedTimeStep = true;
             TargetElapsedTime = TimeSpan.FromSeconds(1d / 60d);
 
-            _preferedScreenSize = new Point(256 * 1, 192 * 1);
+            _preferedScreenSize = new Point(256 * 4, 192 * 4);
         }
 
         protected override void Initialize()
@@ -162,6 +164,14 @@ namespace SeaCollector
         {
             _spriteBatch = new SpriteBatch(GraphicsDevice);
             GameSceneManager.Instance.RenderContext.SpriteBatch = _spriteBatch;
+            
+            GameSceneManager.Instance.RenderContext.DepthTarget = new RenderTarget2D(GraphicsDevice, _preferedScreenSize.X, _preferedScreenSize.Y, false,
+                GraphicsDevice.PresentationParameters.BackBufferFormat, DepthFormat.Depth24);
+            
+            GameSceneManager.Instance.RenderContext.DiffuseTarget = new RenderTarget2D(GraphicsDevice, _preferedScreenSize.X, _preferedScreenSize.Y, false,
+                GraphicsDevice.PresentationParameters.BackBufferFormat, DepthFormat.Depth24);
+            
+            _blur = Content.Load<Effect>("Effects/BlurSpriteShader");
             base.LoadContent();
         }
 
@@ -196,7 +206,7 @@ namespace SeaCollector
             GraphicsDevice.SetRenderTarget(null);
 
             _spriteBatch.Begin(SpriteSortMode.Deferred, BlendState.AlphaBlend, SamplerState.PointClamp,
-                DepthStencilState.Default, RasterizerState.CullCounterClockwise);
+                DepthStencilState.Default, RasterizerState.CullCounterClockwise, effect: _blur);
             _spriteBatch.Draw(_renderTarget, RenderTargetRectangle, Color.White);
             _spriteBatch.End();
         }
