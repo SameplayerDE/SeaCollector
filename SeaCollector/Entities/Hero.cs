@@ -2,6 +2,8 @@ using System;
 using Accessibility;
 using HxTime;
 using Microsoft.Xna.Framework;
+using Microsoft.Xna.Framework.Audio;
+using Microsoft.Xna.Framework.Content;
 using Microsoft.Xna.Framework.Graphics;
 using Microsoft.Xna.Framework.Input;
 using SeaCollector.Framework;
@@ -11,6 +13,7 @@ namespace SeaCollector.Entities
     public class Hero : GameObject3D
     {
         public GameMeshObject GameMeshObject;
+        public SoundEffectInstanceObject3D SoundEffectInstanceObject3D;
 
         public float _rotationX = 0f;
         public float _destrotationY = 0f;
@@ -21,6 +24,11 @@ namespace SeaCollector.Entities
             GameMeshObject = new GameMeshObject("Textures/Link/main_red", "Effects/TextureCellShader","Content/Models/link.obj");
             GameMeshObject.Scale(0.8f, 0.8f, 0.8f);
             AddChild(GameMeshObject);
+
+            SoundEffectInstanceObject3D = new SoundEffectInstanceObject3D();
+            SoundEffectInstanceObject3D.SoundEffectFile = "Sounds/collect";
+            AddChild(SoundEffectInstanceObject3D);
+            
             base.Initialize();
         }
 
@@ -48,6 +56,7 @@ namespace SeaCollector.Entities
 
             if (direction.Length() != 0)
             {
+                SoundEffectInstanceObject3D.Play();
                 direction.Normalize();
                 _destrotationY = (float)Math.Atan2(-direction.X, -direction.Z);
                 _rotationY = (float)Math.Atan2(-direction.X, -direction.Z);
