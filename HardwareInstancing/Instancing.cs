@@ -30,7 +30,7 @@ namespace HardwareInstancing
             public Vector2 AtlasCoordinate;
         };
 
-        Int32 instanceCount = 10000;
+        Int32 instanceCount = 1_000_000;
 
         public void Initialize(GraphicsDevice device)
         {
@@ -166,9 +166,9 @@ namespace HardwareInstancing
             for (int i = 0; i < count; i++)
             {
                 //random position example
-                instances[i].World = new Vector4(i,
-                    0,
-                    i, 1);
+                instances[i].World = new Vector4(rnd.Next(-500, 500),
+                    rnd.Next(-500, 500),
+                    rnd.Next(-500, 500), 1);
 
                 instances[i].AtlasCoordinate = new Vector2(rnd.Next(0, 2), rnd.Next(0, 2));
             }
@@ -181,7 +181,7 @@ namespace HardwareInstancing
         //view and projection should come from your camera
         public void Draw(ref Matrix view, ref Matrix projection, GraphicsDevice device)
         {
-            device.Clear(Color.CornflowerBlue);
+            device.Clear(Color.Black);
 
             effect.CurrentTechnique = effect.Techniques["Instancing"];
             effect.Parameters["WVP"].SetValue(view * projection);

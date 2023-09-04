@@ -65,7 +65,7 @@ namespace HardwareInstancing
             var keyboardState = Keyboard.GetState();
 
             const float movementSpeed = 2f;
-            const float rotationSpeed = 2f;
+            const float rotationSpeed = 0.5f;
 
             var velocity = Vector3.Zero;
             var rotation = Vector3.Zero;
